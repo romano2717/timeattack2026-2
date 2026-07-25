@@ -44,7 +44,7 @@ function goToSlide(index) {
 
 function restartAutoPlay() {
   clearInterval(autoPlay);
-  autoPlay = setInterval(() => goToSlide(currentSlide + 1), 800);
+  autoPlay = setInterval(() => goToSlide(currentSlide + 1), 1000);
 }
 
 if (slides.length) {
