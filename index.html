@@ -157,13 +157,14 @@
             <p class="category-label">KIDS CATEGORY</p>
             <h3>1 vs 1 Challenge</h3>
             <p>Non-strict 1/12 or 1/10 scale RC crawlers.</p>
-            <div class="rules-placeholder">
-              <strong>Specific Rules</strong>
-              <p>
-                Detailed rules, qualifying format, penalties, and track
-                guidelines will be added here.
-              </p>
-            </div>
+            <button
+              class="button button-primary mechanics-button"
+              type="button"
+              data-open-modal="kids-mechanics-modal"
+              aria-haspopup="dialog"
+            >
+              View Race Mechanics
+            </button>
           </article>
 
           <article class="category-card reveal">
@@ -432,6 +433,116 @@
       </div>
       <p class="copyright">© 2026 Southside Cebu RC. All rights reserved.</p>
     </footer>
+
+
+
+    <div
+      id="kids-mechanics-modal"
+      class="mechanics-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="kids-mechanics-title"
+      aria-hidden="true"
+    >
+      <div class="mechanics-modal-backdrop" data-close-modal></div>
+      <div class="mechanics-modal-panel" role="document">
+        <div class="mechanics-modal-header">
+          <div>
+            <p class="eyebrow">KIDS CATEGORY</p>
+            <h2 id="kids-mechanics-title">Kids Category Race Mechanics</h2>
+          </div>
+          <button
+            class="mechanics-modal-close"
+            type="button"
+            aria-label="Close race mechanics"
+            data-close-modal
+          >
+            ×
+          </button>
+        </div>
+
+        <div class="mechanics-modal-body">
+          <section>
+            <h3>Age Requirements</h3>
+            <p>4 years old to 12 years old.</p>
+          </section>
+
+          <section>
+            <h3>Vehicle Requirements</h3>
+            <ul>
+              <li>Open to 1/10 and 1/12 scale RC crawlers.</li>
+              <li>Depending on the number of participants, racers may be grouped by scale: 1/10 versus 1/10 and 1/12 versus 1/12. However, if there are insufficient participants in either scale, the organiser may combine both scales into a single race bracket.</li>
+              <li>The vehicle must be safe to operate and pass technical inspection before racing.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Race Format</h3>
+            <ul>
+              <li>The competition follows a 1 vs 1 elimination format.</li>
+              <li>Racers will be paired through a random draw before the start of the event.</li>
+              <li>Each match consists of two racers running simultaneously on identical courses.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Winning a Match</h3>
+            <p>The winner of each match is determined by:</p>
+            <ol>
+              <li>Successfully completing the course.</li>
+              <li>If both racers finish, the racer with the faster completion time advances.</li>
+              <li>If only one racer finishes within the time limit, that racer advances automatically.</li>
+              <li>If neither racer finishes, the racer who progresses farther through the course advances.</li>
+            </ol>
+          </section>
+
+          <section>
+            <h3>Tournament Progression</h3>
+            <ul>
+              <li>Winners advance to the next elimination round.</li>
+              <li>The tournament continues until only one racer remains.</li>
+              <li>Depending on the number of participants, the organiser may conduct quarterfinals, semifinals, and finals.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Time Limit</h3>
+            <p>Each match has a maximum time limit of 10 minutes.</p>
+          </section>
+
+          <section>
+            <h3>Penalties</h3>
+            <ul>
+              <li>Boundary violations</li>
+              <li>Unsportsmanlike conduct</li>
+              <li>Outside assistance</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Marshals' Decision</h3>
+            <ul>
+              <li>Course marshals monitor every run.</li>
+              <li>The marshal's decision regarding penalties, progress, and finish order is final.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Awards</h3>
+            <ul>
+              <li>Champion</li>
+              <li>1st Runner-up</li>
+              <li>2nd Runner-up</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Tie-breaker</h3>
+            <p>If two racers record exactly the same finishing time, the two racers will restart the race.</p>
+          </section>
+        </div>
+      </div>
+    </div>
 
     <script src="script.js"></script>
   </body>

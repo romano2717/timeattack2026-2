@@ -87,3 +87,41 @@ const observer = new IntersectionObserver(
 document
   .querySelectorAll(".reveal")
   .forEach((element) => observer.observe(element));
+
+const modalOpeners = document.querySelectorAll("[data-open-modal]");
+const modalClosers = document.querySelectorAll("[data-close-modal]");
+let activeModal = null;
+let lastFocusedElement = null;
+
+function openModal(modal) {
+  if (!modal) return;
+  lastFocusedElement = document.activeElement;
+  activeModal = modal;
+  modal.classList.add("open");
+  modal.setAttribute("aria-hidden", "false");
+  document.body.classList.add("modal-open");
+  modal.querySelector(".mechanics-modal-close")?.focus();
+}
+
+function closeModal(modal = activeModal) {
+  if (!modal) return;
+  modal.classList.remove("open");
+  modal.setAttribute("aria-hidden", "true");
+  document.body.classList.remove("modal-open");
+  activeModal = null;
+  lastFocusedElement?.focus();
+}
+
+modalOpeners.forEach((button) => {
+  button.addEventListener("click", () => {
+    openModal(document.getElementById(button.dataset.openModal));
+  });
+});
+
+modalClosers.forEach((button) => {
+  button.addEventListener("click", () => closeModal(button.closest(".mechanics-modal")));
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && activeModal) closeModal();
+});
