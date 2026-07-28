@@ -27,11 +27,13 @@ function renderDots() {
     dot.type = "button";
     dot.setAttribute("aria-label", `Show photo ${index + 1}`);
     dot.addEventListener("click", () => goToSlide(index));
-    dotsContainer.appendChild(dot);
+    dotsContainer?.appendChild(dot);
   });
 }
 
 function goToSlide(index) {
+  if (!slides.length || !track) return;
+
   currentSlide = (index + slides.length) % slides.length;
   track.style.transform = `translateX(-${currentSlide * 100}%)`;
   document
@@ -47,11 +49,11 @@ function restartAutoPlay() {
   autoPlay = setInterval(() => goToSlide(currentSlide + 1), 1000);
 }
 
-if (slides.length) {
+if (slides.length && track) {
   renderDots();
   goToSlide(0);
-  prevButton.addEventListener("click", () => goToSlide(currentSlide - 1));
-  nextButton.addEventListener("click", () => goToSlide(currentSlide + 1));
+  prevButton?.addEventListener("click", () => goToSlide(currentSlide - 1));
+  nextButton?.addEventListener("click", () => goToSlide(currentSlide + 1));
 
   let touchStartX = 0;
   track.addEventListener(
@@ -65,8 +67,9 @@ if (slides.length) {
     "touchend",
     (event) => {
       const distance = event.changedTouches[0].clientX - touchStartX;
-      if (Math.abs(distance) > 45)
+      if (Math.abs(distance) > 45) {
         goToSlide(currentSlide + (distance < 0 ? 1 : -1));
+      }
     },
     { passive: true },
   );
@@ -95,6 +98,7 @@ let lastFocusedElement = null;
 
 function openModal(modal) {
   if (!modal) return;
+
   lastFocusedElement = document.activeElement;
   activeModal = modal;
   modal.classList.add("open");
@@ -105,23 +109,33 @@ function openModal(modal) {
 
 function closeModal(modal = activeModal) {
   if (!modal) return;
+
   modal.classList.remove("open");
   modal.setAttribute("aria-hidden", "true");
   document.body.classList.remove("modal-open");
-  activeModal = null;
+
+  if (activeModal === modal) {
+    activeModal = null;
+  }
+
   lastFocusedElement?.focus();
 }
 
 modalOpeners.forEach((button) => {
-  button.addEventListener("click", () => {
+  button.addEventListener("click", (event) => {
+    event.preventDefault();
     openModal(document.getElementById(button.dataset.openModal));
   });
 });
 
 modalClosers.forEach((button) => {
-  button.addEventListener("click", () => closeModal(button.closest(".mechanics-modal")));
+  button.addEventListener("click", () => {
+    closeModal(button.closest(".mechanics-modal"));
+  });
 });
 
 document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && activeModal) closeModal();
+  if (event.key === "Escape" && activeModal) {
+    closeModal();
+  }
 });

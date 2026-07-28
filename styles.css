@@ -332,3 +332,27 @@ body.modal-open { overflow: hidden; }
   .mechanics-modal-body { padding: 24px 18px 34px; }
   .mechanics-button { width: 100%; }
 }
+/* Previous event popup */
+.previous-event-modal .mechanics-modal-panel {
+  width: min(720px, 100%);
+}
+
+.previous-event-content {
+  text-align: center;
+}
+
+.previous-event-content p {
+  max-width: 560px;
+  margin: 0 auto 24px;
+  color: #5f5345;
+}
+
+.previous-event-content .button {
+  min-width: min(100%, 280px);
+}
+
+@media (max-width: 680px) {
+  .previous-event-content .button {
+    width: 100%;
+  }
+}

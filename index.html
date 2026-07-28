@@ -74,6 +74,14 @@
               rel="noopener noreferrer"
               >Facebook Page</a
             >
+            <button
+              class="button button-secondary"
+              type="button"
+              data-open-modal="previous-event-modal"
+              aria-haspopup="dialog"
+            >
+              Previous Event
+            </button>
           </div>
         </div>
       </section>
@@ -392,6 +400,45 @@
       </div>
       <p class="copyright">© 2026 Southside Cebu RC. All rights reserved.</p>
     </footer>
+
+
+    <div
+      id="previous-event-modal"
+      class="mechanics-modal previous-event-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="previous-event-title"
+      aria-hidden="true"
+    >
+      <div class="mechanics-modal-backdrop" data-close-modal></div>
+      <div class="mechanics-modal-panel previous-event-panel" role="document">
+        <div class="mechanics-modal-header">
+          <div>
+            <p class="eyebrow">SOUTHSIDE CEBU RC</p>
+            <h2 id="previous-event-title">Our Previous Event</h2>
+          </div>
+          <button
+            class="mechanics-modal-close"
+            type="button"
+            aria-label="Close previous event"
+            data-close-modal
+          >
+            ×
+          </button>
+        </div>
+        <div class="mechanics-modal-body previous-event-body">
+          <p>Relive the action, challenges, and memorable moments from our previous RC crawler event.</p>
+          <a
+            class="button button-primary previous-event-link"
+            href="https://www.facebook.com/reel/1852268948825526"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Watch Previous Event Reel
+          </a>
+        </div>
+      </div>
+    </div>
 
 
 
