@@ -206,13 +206,13 @@
             <p class="category-label">ADULT CATEGORY</p>
             <h3>Class 2 Pro-Stock</h3>
             <p>A competitive time attack class for experienced drivers.</p>
-            <div class="rules-placeholder">
-              <strong>Specific Rules</strong>
-              <p>
-                Detailed vehicle specifications, scoring, penalties, and race
-                procedures will be added here.
-              </p>
-            </div>
+            <button
+                class="button button-primary mechanics-button"
+                type="button"
+                data-open-modal="adult-mechanics-modal"
+                aria-haspopup="dialog">
+                View Race Mechanics
+            </button>
           </article>
         </div>
       </section>
@@ -508,7 +508,139 @@
     </div>
 
 
+    <div
+  id="adult-mechanics-modal"
+  class="mechanics-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-labelledby="adult-mechanics-title"
+  aria-hidden="true">
 
+  <div class="mechanics-modal-backdrop" data-close-modal></div>
+
+  <div class="mechanics-modal-panel" role="document">
+
+    <div class="mechanics-modal-header">
+      <div>
+        <p class="eyebrow">ADULT CATEGORY</p>
+        <h2 id="adult-mechanics-title">
+          Class 2 Pro-Stock Race Mechanics
+        </h2>
+      </div>
+
+      <button
+        class="mechanics-modal-close"
+        type="button"
+        aria-label="Close race mechanics"
+        data-close-modal>
+        ×
+      </button>
+    </div>
+
+    <div class="mechanics-modal-body">
+
+      <section>
+        <h3>Vehicle Class</h3>
+        <p>
+          Class 2 Pro-Stock (1/10 Scale)
+        </p>
+        <p>
+          The Adult Category is open to 1/10 scale Class 2 Pro-Stock RC
+          crawlers. All vehicles are subject to inspection before racing.
+        </p>
+      </section>
+
+      <section>
+        <h3>General Specifications</h3>
+
+        <h4>Required</h4>
+
+        <ul>
+          <li>Front bumper is required.</li>
+          <li>Manufactured tires measuring 4.30"–4.75".</li>
+          <li>1.9" wheels only.</li>
+          <li>Maximum wheelbase: 355 mm.</li>
+          <li>Hardbody or Lexan body.</li>
+          <li>No scale points required.</li>
+          <li>Vehicle must pass technical inspection.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Not Allowed</h3>
+
+        <ul>
+          <li>No cheater body cut.</li>
+          <li>No DIG.</li>
+          <li>No Four-Wheel Steering (4WS).</li>
+          <li>No switchable Overdrive (OD).</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Pro-Stock Chassis Rules</h3>
+
+        <p>
+          Heavily modified, upgraded and tuned stock rigs are allowed,
+          including RTR competition rigs and custom-built competition rigs,
+          provided they comply with the Class 2 specifications.
+        </p>
+
+        <ul>
+          <li>C-channel or Flat Rails are permitted.</li>
+          <li>Center Skid chassis only.</li>
+          <li>Forward Skid link geometry is not permitted.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Body Requirements</h3>
+
+        <h4>Full Body</h4>
+
+        <ul>
+          <li>
+            Coffin-style body shape (Cliffhanger, Tucked, Coyote or similar).
+          </li>
+        </ul>
+
+        <h4>Cab Body</h4>
+
+        <ul>
+          <li>No exposed chassis rails.</li>
+          <li>Bed must extend at least between the chassis rails.</li>
+          <li>Bed sides are required.</li>
+          <li>Tailgate is optional.</li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Additional Requirements</h3>
+
+        <ul>
+          <li>No cheater body cut.</li>
+          <li>Tires may extend beyond the front bumper.</li>
+          <li>
+            Chassis (including bumper) must be approximately 3 mm wider than
+            the body shell.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h3>Vehicle Inspection</h3>
+
+        <p>
+          Every vehicle will undergo inspection before racing. Vehicles that
+          fail inspection must be corrected before being allowed to compete.
+        </p>
+      </section>
+
+    </div>
+
+  </div>
+
+</div>
     <div
       id="kids-mechanics-modal"
       class="mechanics-modal"
