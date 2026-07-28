@@ -95,7 +95,7 @@ button { font: inherit; }
 .sponsor-strip { background: var(--surface); color: var(--ink); padding: 24px 0 30px; overflow: hidden; }
 .sponsor-label { margin: 0 0 18px; text-align: center; font-size: .68rem; font-weight: 800; letter-spacing: .2em; }
 .marquee { overflow: hidden; width: 100%; }
-.marquee-track { display: flex; align-items: center; width: max-content; animation: sponsor-scroll 3s linear infinite reverse; }
+.marquee-track { display: flex; align-items: center; width: max-content; animation: sponsor-scroll 10s linear infinite reverse; }
 .marquee:hover .marquee-track { animation-play-state: paused; }
 .marquee img { width: clamp(130px, 14vw, 220px); height: 80px; margin: 0 clamp(18px, 3vw, 48px); object-fit: contain; filter: contrast(.96); }
 @keyframes sponsor-scroll { to { transform: translateX(-50%); } }
