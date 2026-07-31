@@ -26,6 +26,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const registrationTypeInput =
     document.getElementById("registrationType");
   const kidsAddonInput = document.getElementById("kidsAddon");
+  const kidsAddonContainer = document.getElementById("kidsAddonContainer");
   const kidsCountField =
     document.getElementById("kids-count-field");
   const kidsCountInput = document.getElementById("kidsCount");
@@ -43,6 +44,7 @@ document.addEventListener("DOMContentLoaded", () => {
     !categoryInput ||
     !registrationTypeInput ||
     !kidsAddonInput ||
+    !kidsAddonContainer ||
     !kidsCountField ||
     !kidsCountInput ||
     !totalFeeInput ||
@@ -93,6 +95,24 @@ document.addEventListener("DOMContentLoaded", () => {
     totalFeeInput.dataset.amount = String(total);
   }
 
+
+  function updateCategoryFields() {
+    const isAdult = categoryInput.value === "Adult";
+
+    kidsAddonContainer.hidden = !isAdult;
+
+    if (!isAdult) {
+      kidsAddonInput.checked = false;
+      kidsCountField.hidden = true;
+      kidsCountInput.required = false;
+      kidsCountInput.value = "";
+    } else {
+      updateKidsAddonFields();
+    }
+
+    calculateTotalFee();
+  }
+
   function updateKidsAddonFields() {
     if (kidsAddonInput.checked) {
       kidsCountField.hidden = false;
@@ -113,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
     calculateTotalFee();
   }
 
-  categoryInput.addEventListener("change", calculateTotalFee);
+  categoryInput.addEventListener("change", updateCategoryFields);
   kidsAddonInput.addEventListener("change", updateKidsAddonFields);
   kidsCountInput.addEventListener("input", () => {
     if (!kidsAddonInput.checked) {
@@ -174,14 +194,20 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     try {
-      await fetch(GOOGLE_SCRIPT_URL, {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
         method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
+        body: new URLSearchParams(payload),
       });
+
+      if (!response.ok) {
+        throw new Error(`Server returned HTTP ${response.status}.`);
+      }
+
+      const result = await response.json();
+
+      if (!result.success) {
+        throw new Error(result.message || "Google Sheets rejected the submission.");
+      }
 
       form.reset();
 
@@ -192,10 +218,11 @@ document.addEventListener("DOMContentLoaded", () => {
       kidsCountInput.required = false;
 
       updateRegistrationType();
-      calculateTotalFee();
+      updateCategoryFields();
 
-      statusText.textContent =
-        "Registration submitted successfully.";
+      statusText.textContent = result.registrationId
+        ? `Registration submitted successfully. Registration ID: ${result.registrationId}`
+        : "Registration submitted successfully. Please wait for payment verification.";
       statusText.className = "form-status success";
     } catch (error) {
       console.error("Registration submission failed:", error);
@@ -210,6 +237,5 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   updateRegistrationType();
-  updateKidsAddonFields();
-  calculateTotalFee();
+  updateCategoryFields();
 });
