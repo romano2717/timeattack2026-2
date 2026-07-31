@@ -1,766 +1,561 @@
 <!DOCTYPE html>
+
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#1b160f" />
-    <meta
-      name="description"
-      content="TIME ATTACK RACE: MUDFEST presented by Southside Cebu RC."
-    />
-    <title>MUDFEST | Southside Cebu RC</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="styles.css" />
-  </head>
-  <body>
-    <header class="site-header">
-      <a class="brand" href="#home" aria-label="MUDFEST home">
-        <span class="brand-mark">MF</span>
-        <span>
-          <strong>MUDFEST</strong>
-          <small>SOUTHSIDE CEBU RC</small>
-        </span>
-      </a>
-
-      <button
-        class="menu-toggle"
-        type="button"
-        aria-expanded="false"
-        aria-controls="main-nav"
-        aria-label="Open navigation"
-      >
-        <span></span><span></span><span></span>
-      </button>
-
-      <nav id="main-nav" class="main-nav" aria-label="Primary navigation">
-        <a href="#race-mechanics">Race Mechanics</a>
-        <a href="#venue">Venue</a>
-        <a href="#highlights">Highlights</a>
-        <a href="#registration">Registration</a>
-        <a href="#sponsors">Sponsors</a>
-        <a href="#event-rules">Event Rules</a>
-      </nav>
-    </header>
-
-    <main>
-      <section id="home" class="hero" aria-labelledby="event-title">
-        <img
-          class="hero-image"
-          src="banner.jpg"
-          alt="MUDFEST RC crawler race event banner"
-        />
-        <div class="hero-overlay"></div>
-        <div class="hero-content reveal">
-          <p class="eyebrow">SOUTHSIDE CEBU RC PRESENTS</p>
-          <h1 id="event-title">TIME ATTACK RACE: <span>MUDFEST</span></h1>
-          <div class="event-meta">
-            <span>September 19, 2026</span>
-            <span>9:00 AM</span>
-            <span>Southern Hills, Minglanilla, Cebu</span>
-          </div>
-          <div class="hero-actions">
-            <a class="button button-primary" href="#race-mechanics"
-              >View Race Details</a
-            >
-            <a
-              class="button button-secondary"
-              href="https://www.facebook.com/profile.php?id=61579456708259"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Facebook Page</a
-            >
-            <a
-              class="button button-secondary"
-              type="button"
-              data-open-modal="previous-event-modal"
-              aria-haspopup="dialog"
-            >
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="#1b160f" name="theme-color"/>
+<meta content="TIME ATTACK RACE: MUDFEST presented by Southside Cebu RC." name="description"/>
+<title>MUDFEST | Southside Cebu RC</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=Montserrat:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="styles.css" rel="stylesheet"/>
+</head>
+<body>
+<header class="site-header">
+<a aria-label="MUDFEST home" class="brand" href="#home">
+<span class="brand-mark">MF</span>
+<span>
+<strong>MUDFEST</strong>
+<small>SOUTHSIDE CEBU RC</small>
+</span>
+</a>
+<button aria-controls="main-nav" aria-expanded="false" aria-label="Open navigation" class="menu-toggle" type="button">
+<span></span><span></span><span></span>
+</button>
+<nav aria-label="Primary navigation" class="main-nav" id="main-nav">
+<a href="#race-mechanics">Race Mechanics</a>
+<a href="#venue">Venue</a>
+<a href="#highlights">Highlights</a>
+<a href="#registration">Registration</a>
+<a href="#sponsors">Sponsors</a>
+<a href="#event-rules">Event Rules</a>
+</nav>
+</header>
+<main>
+<section aria-labelledby="event-title" class="hero" id="home">
+<img alt="MUDFEST RC crawler race event banner" class="hero-image" src="banner.jpg"/>
+<div class="hero-overlay"></div>
+<div class="hero-content reveal">
+<p class="eyebrow">SOUTHSIDE CEBU RC PRESENTS</p>
+<h1 id="event-title">TIME ATTACK RACE: <span>MUDFEST</span></h1>
+<div class="event-meta">
+<span>September 19, 2026</span>
+<span>9:00 AM</span>
+<span>Southern Hills, Minglanilla, Cebu</span>
+</div>
+<div class="hero-actions">
+<a class="button button-primary" href="#race-mechanics">View Race Details</a>
+<a class="button button-secondary" href="https://www.facebook.com/profile.php?id=61579456708259" rel="noopener noreferrer" target="_blank">Facebook Page</a>
+<a aria-haspopup="dialog" class="button button-secondary" data-open-modal="previous-event-modal" type="button">
               Previous Event
             </a>
-          </div>
-        </div>
-      </section>
-
-      <section class="welcome section-shell">
-        <div class="section-heading reveal">
-          <p class="eyebrow">WELCOME TO THE MUD</p>
-          <h2>Built for racers. Open to everyone.</h2>
-        </div>
-        <p class="welcome-copy reveal">
+</div>
+</div>
+</section>
+<section class="welcome section-shell">
+<div class="section-heading reveal">
+<p class="eyebrow">WELCOME TO THE MUD</p>
+<h2>Built for racers. Open to everyone.</h2>
+</div>
+<p class="welcome-copy reveal">
           Calling all RC crawler hobbyists, families, and spectators! Join us
           for a full day of mud, precision driving, friendly competition, and
           community fun. Bring your rig, cheer for your favourite racers, and
           experience the excitement of MUDFEST with Southside Cebu RC.
         </p>
-      </section>
-
-      <section class="sponsor-strip" aria-label="Event sponsors">
-        <p class="sponsor-label">SUPPORTED BY</p>
-        <div class="marquee">
-          <div class="marquee-track">
-  <!-- First set -->
-  <div class="sponsor-item">
-    <img src="sp1.jpg" alt="The Mindanao Basket Cebu">
-    <span>The Mindanao Basket Cebu</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp2.jpg" alt="Crawl Me Maybe">
-    <span>Crawl Me Maybe</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp3.jpg" alt="RC Nation PH">
-    <span>RC Nation PH</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp4.jpg" alt="RC Criz Hub">
-    <span>RC Criz Hub</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp5.jpg" alt="RCX Cafe">
-    <span>RCX Cafe</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp6.jpg" alt="Bully Concepts">
-    <span>Bullyconcepts</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp7.jpg" alt="Beröl Lubricants Philippines">
-    <span>Beröl Lubricants Philippines</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp8.jpg" alt="JD's grill">
-    <span>JD's grill</span>
-  </div>
-
-  <!-- Duplicate for seamless marquee -->
-  <div class="sponsor-item">
-    <img src="sp1.jpg" alt="" aria-hidden="true">
-    <span>The Mindanao Basket Cebu</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp2.jpg" alt="" aria-hidden="true">
-    <span>Crawl Me Maybe</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp3.jpg" alt="" aria-hidden="true">
-    <span>RC Nation PH</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp4.jpg" alt="" aria-hidden="true">
-    <span>RC Criz Hub</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp5.jpg" alt="" aria-hidden="true">
-    <span>RCX Cafe</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp6.jpg" alt="" aria-hidden="true">
-    <span>Bullyconcepts</span>
-  </div>
-
-  <div class="sponsor-item">
-    <img src="sp7.jpg" alt="" aria-hidden="true">
-    <span>Beröl Lubricants Philippines</span>
-  </div>
-  
-  <div class="sponsor-item">
-    <img src="sp8.jpg" alt="JD's grill">
-    <span>JD's grill</span>
-  </div>
+</section>
+<section aria-label="Event sponsors" class="sponsor-strip">
+<p class="sponsor-label">SUPPORTED BY</p>
+<div class="marquee">
+<div class="marquee-track">
+<!-- First set -->
+<div class="sponsor-item">
+<img alt="The Mindanao Basket Cebu" src="sp1.jpg"/>
+<span>The Mindanao Basket Cebu</span>
 </div>
-        </div>
-      </section>
-
-      <section id="race-mechanics" class="section section-shell">
-        <div class="section-heading reveal">
-          <p class="eyebrow">HOW THE RACE WORKS</p>
-          <h2>Race Mechanics</h2>
-          <p>Two categories. One muddy course. Every second counts.</p>
-        </div>
-
-        <div class="category-grid">
-          <article class="category-card reveal">
-            <div class="category-number">01</div>
-            <p class="category-label">KIDS CATEGORY</p>
-            <h3>1 vs 1 Challenge</h3>
-            <p>Non-strict 1/12 or 1/10 scale RC crawlers.</p>
-            <button
-              class="button button-primary mechanics-button"
-              type="button"
-              data-open-modal="kids-mechanics-modal"
-              aria-haspopup="dialog"
-            >
+<div class="sponsor-item">
+<img alt="Crawl Me Maybe" src="sp2.jpg"/>
+<span>Crawl Me Maybe</span>
+</div>
+<div class="sponsor-item">
+<img alt="RC Nation PH" src="sp3.jpg"/>
+<span>RC Nation PH</span>
+</div>
+<div class="sponsor-item">
+<img alt="RC Criz Hub" src="sp4.jpg"/>
+<span>RC Criz Hub</span>
+</div>
+<div class="sponsor-item">
+<img alt="RCX Cafe" src="sp5.jpg"/>
+<span>RCX Cafe</span>
+</div>
+<div class="sponsor-item">
+<img alt="Bully Concepts" src="sp6.jpg"/>
+<span>Bullyconcepts</span>
+</div>
+<div class="sponsor-item">
+<img alt="Beröl Lubricants Philippines" src="sp7.jpg"/>
+<span>Beröl Lubricants Philippines</span>
+</div>
+<div class="sponsor-item">
+<img alt="JD's grill" src="sp8.jpg"/>
+<span>JD's grill</span>
+</div>
+<!-- Duplicate for seamless marquee -->
+<div class="sponsor-item">
+<img alt="" aria-hidden="true" src="sp1.jpg"/>
+<span>The Mindanao Basket Cebu</span>
+</div>
+<div class="sponsor-item">
+<img alt="" aria-hidden="true" src="sp2.jpg"/>
+<span>Crawl Me Maybe</span>
+</div>
+<div class="sponsor-item">
+<img alt="" aria-hidden="true" src="sp3.jpg"/>
+<span>RC Nation PH</span>
+</div>
+<div class="sponsor-item">
+<img alt="" aria-hidden="true" src="sp4.jpg"/>
+<span>RC Criz Hub</span>
+</div>
+<div class="sponsor-item">
+<img alt="" aria-hidden="true" src="sp5.jpg"/>
+<span>RCX Cafe</span>
+</div>
+<div class="sponsor-item">
+<img alt="" aria-hidden="true" src="sp6.jpg"/>
+<span>Bullyconcepts</span>
+</div>
+<div class="sponsor-item">
+<img alt="" aria-hidden="true" src="sp7.jpg"/>
+<span>Beröl Lubricants Philippines</span>
+</div>
+<div class="sponsor-item">
+<img alt="JD's grill" src="sp8.jpg"/>
+<span>JD's grill</span>
+</div>
+</div>
+</div>
+</section>
+<section class="section section-shell" id="race-mechanics">
+<div class="section-heading reveal">
+<p class="eyebrow">HOW THE RACE WORKS</p>
+<h2>Race Mechanics</h2>
+<p>Two categories. One muddy course. Every second counts.</p>
+</div>
+<div class="category-grid">
+<article class="category-card reveal">
+<div class="category-number">01</div>
+<p class="category-label">KIDS CATEGORY</p>
+<h3>1 vs 1 Challenge</h3>
+<p>Non-strict 1/12 or 1/10 scale RC crawlers.</p>
+<button aria-haspopup="dialog" class="button button-primary mechanics-button" data-open-modal="kids-mechanics-modal" type="button">
               View Race Mechanics
             </button>
-          </article>
-
-          <article class="category-card reveal">
-            <div class="category-number">02</div>
-            <p class="category-label">ADULT CATEGORY</p>
-            <h3>Class 2 Pro-Stock</h3>
-            <p>A competitive time attack class for experienced drivers.</p>
-            <button
-                class="button button-primary mechanics-button"
-                type="button"
-                data-open-modal="adult-mechanics-modal"
-                aria-haspopup="dialog">
+</article>
+<article class="category-card reveal">
+<div class="category-number">02</div>
+<p class="category-label">ADULT CATEGORY</p>
+<h3>Class 2 Pro-Stock</h3>
+<p>A competitive time attack class for experienced drivers.</p>
+<button aria-haspopup="dialog" class="button button-primary mechanics-button" data-open-modal="adult-mechanics-modal" type="button">
                 View Race Mechanics
             </button>
-          </article>
-        </div>
-      </section>
-
-      <section id="venue" class="section venue-section">
-        <div class="section-shell">
-          <div class="section-heading reveal">
-            <p class="eyebrow">PLAN YOUR VISIT</p>
-            <h2>Venue</h2>
-            <p>Southern Hills, Minglanilla, Cebu</p>
-          </div>
-
-          <div class="venue-summary reveal">
-            <div>
-              <span class="venue-icon" aria-hidden="true">⌖</span>
-              <div>
-                <p class="venue-label">EVENT LOCATION</p>
-                <h3>Southern Hills, Minglanilla, Cebu</h3>
-              </div>
-            </div>
-            <a
-              class="button button-primary"
-              href="https://www.google.com/maps/search/?api=1&query=Southern+Hills+Minglanilla+Cebu"
-              target="_blank"
-              rel="noopener noreferrer"
-              >Open Map Pin</a
-            >
-          </div>
-
-          <div class="venue-grid">
-            <article class="venue-card reveal">
-              <img src="gate.jpg" alt="Southern Hills venue overview" />
-              <div>
-                <p>VENUE OVERVIEW</p>
-                <h3>Southern Hills</h3>
-              </div>
-            </article>
-            <article class="venue-card reveal">
-              <img
-                src="entrance.jpg"
-                alt="Entrance and exit of the event venue"
-              />
-              <div>
-                <p>ACCESS POINT</p>
-                <h3>Entrance / Exit</h3>
-              </div>
-            </article>
-            <article class="venue-card reveal">
-              <img src="parking.jpg" alt="Parking space at the event venue" />
-              <div>
-                <p>VEHICLE AREA</p>
-                <h3>Parking Space</h3>
-              </div>
-            </article>
-            <article class="venue-card venue-parts reveal">
-              <img
-                src="parts.jpg"
-                alt="Map showing the different parts of the venue"
-              />
-              <div>
-                <p>VENUE LAYOUT</p>
-                <h3>Parts of the Venue</h3>
-                <ul>
-                  <li><strong>A:</strong> Food Stall and Sponsor Tables</li>
-                  <li><strong>B:</strong> Kids Category Track</li>
-                  <li><strong>C:</strong> Camp Ground Audience</li>
-                  <li><strong>D:</strong> Crawler Course</li>
-                </ul>
-              </div>
-            </article>
-          </div>
-        </div>
-      </section>
-
-      <section id="highlights" class="section section-shell">
-        <div class="section-heading reveal">
-          <p class="eyebrow">FROM THE TRAILS</p>
-          <h2>Highlights</h2>
-          <p>
+</article>
+</div>
+</section>
+<section class="section venue-section" id="venue">
+<div class="section-shell">
+<div class="section-heading reveal">
+<p class="eyebrow">PLAN YOUR VISIT</p>
+<h2>Venue</h2>
+<p>Southern Hills, Minglanilla, Cebu</p>
+</div>
+<div class="venue-summary reveal">
+<div>
+<span aria-hidden="true" class="venue-icon">⌖</span>
+<div>
+<p class="venue-label">EVENT LOCATION</p>
+<h3>Southern Hills, Minglanilla, Cebu</h3>
+</div>
+</div>
+<a class="button button-primary" href="https://www.google.com/maps/search/?api=1&amp;query=Southern+Hills+Minglanilla+Cebu" rel="noopener noreferrer" target="_blank">Open Map Pin</a>
+</div>
+<div class="venue-grid">
+<article class="venue-card reveal">
+<img alt="Southern Hills venue overview" src="gate.jpg"/>
+<div>
+<p>VENUE OVERVIEW</p>
+<h3>Southern Hills</h3>
+</div>
+</article>
+<article class="venue-card reveal">
+<img alt="Entrance and exit of the event venue" src="entrance.jpg"/>
+<div>
+<p>ACCESS POINT</p>
+<h3>Entrance / Exit</h3>
+</div>
+</article>
+<article class="venue-card reveal">
+<img alt="Parking space at the event venue" src="parking.jpg"/>
+<div>
+<p>VEHICLE AREA</p>
+<h3>Parking Space</h3>
+</div>
+</article>
+<article class="venue-card venue-parts reveal">
+<img alt="Map showing the different parts of the venue" src="parts.jpg"/>
+<div>
+<p>VENUE LAYOUT</p>
+<h3>Parts of the Venue</h3>
+<ul>
+<li><strong>A:</strong> Food Stall and Sponsor Tables</li>
+<li><strong>B:</strong> Kids Category Track</li>
+<li><strong>C:</strong> Camp Ground Audience</li>
+<li><strong>D:</strong> Crawler Course</li>
+</ul>
+</div>
+</article>
+</div>
+</div>
+</section>
+<section class="section section-shell" id="highlights">
+<div class="section-heading reveal">
+<p class="eyebrow">FROM THE TRAILS</p>
+<h2>Highlights</h2>
+<p>
             A look at the rigs, drivers, and muddy moments that make our
             community special.
           </p>
-          <img
-            class="hero-highlights"
-            src="SH-group.jpg"
-            alt="MUDFEST RC crawler race event banner"
-          />
-        </div>
-
-        <div
-          class="photo-carousel reveal"
-          aria-label="Event highlights photo carousel"
-        >
-          <button
-            class="carousel-button prev"
-            type="button"
-            aria-label="Previous photo"
-          >
+<img alt="MUDFEST RC crawler race event banner" class="hero-highlights" src="SH-group.jpg"/>
+</div>
+<div aria-label="Event highlights photo carousel" class="photo-carousel reveal">
+<button aria-label="Previous photo" class="carousel-button prev" type="button">
             ‹
           </button>
-          <div class="carousel-viewport">
-            <div class="carousel-track">
-              <figure><img src="s1.jpg" alt="RC crawler highlight 1" /></figure>
-              <figure><img src="s2.jpg" alt="RC crawler highlight 2" /></figure>
-              <figure><img src="s3.jpg" alt="RC crawler highlight 3" /></figure>
-              <figure><img src="s4.jpg" alt="RC crawler highlight 4" /></figure>
-              <figure><img src="s5.jpg" alt="RC crawler highlight 5" /></figure>
-              <figure><img src="s6.jpg" alt="RC crawler highlight 6" /></figure>
-              <figure><img src="s7.jpg" alt="RC crawler highlight 7" /></figure>
-              <figure><img src="s8.jpg" alt="RC crawler highlight 8" /></figure>
-              <figure><img src="s9.jpg" alt="RC crawler highlight 9" /></figure>
-              <figure>
-                <img src="s10.jpg" alt="RC crawler highlight 10" />
-              </figure>
-              <figure>
-                <img src="s11.jpg" alt="RC crawler highlight 11" />
-              </figure>
-              <figure>
-                <img src="s12.jpg" alt="RC crawler highlight 12" />
-              </figure>
-              <figure>
-                <img src="s13.jpg" alt="RC crawler highlight 13" />
-              </figure>
-              <figure>
-                <img src="s14.jpg" alt="RC crawler highlight 14" />
-              </figure>
-              <figure>
-                <img src="s15.jpg" alt="RC crawler highlight 15" />
-              </figure>
-              <figure>
-                <img src="s16.jpg" alt="RC crawler highlight 16" />
-              </figure>
-              <figure>
-                <img src="s17.jpg" alt="RC crawler highlight 17" />
-              </figure>
-              <figure>
-                <img src="s18.jpg" alt="RC crawler highlight 18" />
-              </figure>
-              <figure>
-                <img src="s19.jpg" alt="RC crawler highlight 19" />
-              </figure>
-              <figure>
-                <img src="s20.jpg" alt="RC crawler highlight 20" />
-              </figure>
-            </div>
-          </div>
-          <button
-            class="carousel-button next"
-            type="button"
-            aria-label="Next photo"
-          >
+<div class="carousel-viewport">
+<div class="carousel-track">
+<figure><img alt="RC crawler highlight 1" src="s1.jpg"/></figure>
+<figure><img alt="RC crawler highlight 2" src="s2.jpg"/></figure>
+<figure><img alt="RC crawler highlight 3" src="s3.jpg"/></figure>
+<figure><img alt="RC crawler highlight 4" src="s4.jpg"/></figure>
+<figure><img alt="RC crawler highlight 5" src="s5.jpg"/></figure>
+<figure><img alt="RC crawler highlight 6" src="s6.jpg"/></figure>
+<figure><img alt="RC crawler highlight 7" src="s7.jpg"/></figure>
+<figure><img alt="RC crawler highlight 8" src="s8.jpg"/></figure>
+<figure><img alt="RC crawler highlight 9" src="s9.jpg"/></figure>
+<figure>
+<img alt="RC crawler highlight 10" src="s10.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 11" src="s11.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 12" src="s12.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 13" src="s13.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 14" src="s14.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 15" src="s15.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 16" src="s16.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 17" src="s17.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 18" src="s18.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 19" src="s19.jpg"/>
+</figure>
+<figure>
+<img alt="RC crawler highlight 20" src="s20.jpg"/>
+</figure>
+</div>
+</div>
+<button aria-label="Next photo" class="carousel-button next" type="button">
             ›
           </button>
-        </div>
-        <div class="carousel-dots" aria-label="Select highlight photo"></div>
-
-        <div class="video-grid">
-          <article class="video-card reveal">
-            <video
-              muted
-              playsinline
-              preload="metadata"
-              poster="s1.jpg"
-              autoplay
-              loop
-            >
-              <source src="cmb-low.mp4" type="video/mp4" />
+</div>
+<div aria-label="Select highlight photo" class="carousel-dots"></div>
+<div class="video-grid">
+<article class="video-card reveal">
+<video autoplay="" loop="" muted="" playsinline="" poster="s1.jpg" preload="metadata">
+<source src="cmb-low.mp4" type="video/mp4"/>
               Your browser does not support the video tag.
             </video>
-            <div>
-              <p>TRAIL HIGHLIGHT</p>
-              <h3>Crawl Me Maybe Run</h3>
-            </div>
-          </article>
-          <article class="video-card reveal">
-            <video
-              muted
-              playsinline
-              preload="metadata"
-              poster="s2.jpg"
-              autoplay
-              loop
-            >
-              <source src="k-bro-low.mp4" type="video/mp4" />
+<div>
+<p>TRAIL HIGHLIGHT</p>
+<h3>Crawl Me Maybe Run</h3>
+</div>
+</article>
+<article class="video-card reveal">
+<video autoplay="" loop="" muted="" playsinline="" poster="s2.jpg" preload="metadata">
+<source src="k-bro-low.mp4" type="video/mp4"/>
               Your browser does not support the video tag.
             </video>
-            <div>
-              <p>TRAIL HIGHLIGHT</p>
-              <h3>K-Bro Run</h3>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <section id="registration" class="section info-section">
-        <div class="section-shell info-card reveal">
-          <p class="eyebrow">JOIN THE RACE</p>
-          <h2>Registration</h2>
-          <p>
-            Registration details, fees, deadlines, and participant requirements
-            will be announced soon.
-          </p>
-          <span class="coming-soon">DETAILS TO BE ADDED</span>
-        </div>
-      </section>
-
-      <section id="sponsors" class="section section-shell">
-        <div class="info-card reveal">
-          <p class="eyebrow">PARTNER WITH US</p>
-          <h2>Sponsor Request</h2>
-          <p>
+<div>
+<p>TRAIL HIGHLIGHT</p>
+<h3>K-Bro Run</h3>
+</div>
+</article>
+</div>
+</section>
+<section class="section info-section" id="registration">
+<div class="section-shell info-card reveal"><p class="eyebrow">JOIN THE RACE</p><h2>Registration</h2><p>Review the registration details and submit your entry through the official MUDFEST registration form.</p><a class="button button-primary" href="registration.html" rel="noopener noreferrer" target="_blank">Register Now</a><p class="registration-deadline">Registration closes once all available slots have been filled.</p></div>
+</section>
+<section class="section section-shell" id="sponsors">
+<div class="info-card reveal">
+<p class="eyebrow">PARTNER WITH US</p>
+<h2>Sponsor Request</h2>
+<p>
             Sponsorship packages, partner benefits, booth arrangements, and
             contact details will be added here.
           </p>
-          <span class="coming-soon">DETAILS TO BE ADDED</span>
-        </div>
-      </section>
-
-      <section id="event-rules" class="section info-section">
-        <div class="section-shell info-card reveal">
-          <p class="eyebrow">RACE FAIR. RACE SAFE.</p>
-          <h2>Event Rules</h2>
-          <p>
+<span class="coming-soon">DETAILS TO BE ADDED</span>
+</div>
+</section>
+<section class="section info-section" id="event-rules">
+<div class="section-shell info-card reveal">
+<p class="eyebrow">RACE FAIR. RACE SAFE.</p>
+<h2>Event Rules</h2>
+<p>
             General event conduct, safety reminders, course restrictions, and
             official rulings will be posted here.
           </p>
-          <span class="coming-soon">DETAILS TO BE ADDED</span>
-        </div>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="footer-content section-shell">
-        <div>
-          <p class="footer-title">TIME ATTACK RACE : MUDFEST</p>
-          <p>Presented by Southside Cebu RC</p>
-          <a
-            class="facebook-link"
-            href="https://www.facebook.com/profile.php?id=61579456708259"
-            target="_blank"
-            rel="noopener noreferrer"
-            >Visit Southside Cebu RC on Facebook ↗</a
-          >
-        </div>
-        <nav class="footer-links" aria-label="Footer navigation">
-          <a href="#home">Home</a>
-          <a href="#race-mechanics">Race Mechanics</a>
-          <a href="#venue">Venue</a>
-          <a href="#highlights">Highlights</a>
-          <a href="#registration">Registration</a>
-          <a href="#sponsors">Sponsor Request</a>
-          <a href="#event-rules">Event Rules</a>
-        </nav>
-      </div>
-      <p class="copyright">© 2026 Southside Cebu RC. All rights reserved.</p>
-    </footer>
-
-
-    <div
-      id="previous-event-modal"
-      class="mechanics-modal previous-event-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="previous-event-title"
-      aria-hidden="true"
-    >
-      <div class="mechanics-modal-backdrop" data-close-modal></div>
-      <div class="mechanics-modal-panel previous-event-panel" role="document">
-        <div class="mechanics-modal-header">
-          <div>
-            <p class="eyebrow">SOUTHSIDE CEBU RC</p>
-            <h2 id="previous-event-title">Our Previous Event</h2>
-          </div>
-          <button
-            class="mechanics-modal-close"
-            type="button"
-            aria-label="Close previous event"
-            data-close-modal
-          >
+<span class="coming-soon">DETAILS TO BE ADDED</span>
+</div>
+</section>
+</main>
+<footer class="site-footer">
+<div class="footer-content section-shell">
+<div>
+<p class="footer-title">TIME ATTACK RACE : MUDFEST</p>
+<p>Presented by Southside Cebu RC</p>
+<a class="facebook-link" href="https://www.facebook.com/profile.php?id=61579456708259" rel="noopener noreferrer" target="_blank">Visit Southside Cebu RC on Facebook ↗</a>
+</div>
+<nav aria-label="Footer navigation" class="footer-links">
+<a href="#home">Home</a>
+<a href="#race-mechanics">Race Mechanics</a>
+<a href="#venue">Venue</a>
+<a href="#highlights">Highlights</a>
+<a href="#registration">Registration</a>
+<a href="#sponsors">Sponsor Request</a>
+<a href="#event-rules">Event Rules</a>
+</nav>
+</div>
+<p class="copyright">© 2026 Southside Cebu RC. All rights reserved.</p>
+</footer>
+<div aria-hidden="true" aria-labelledby="previous-event-title" aria-modal="true" class="mechanics-modal previous-event-modal" id="previous-event-modal" role="dialog">
+<div class="mechanics-modal-backdrop" data-close-modal=""></div>
+<div class="mechanics-modal-panel previous-event-panel" role="document">
+<div class="mechanics-modal-header">
+<div>
+<p class="eyebrow">SOUTHSIDE CEBU RC</p>
+<h2 id="previous-event-title">Our Previous Event</h2>
+</div>
+<button aria-label="Close previous event" class="mechanics-modal-close" data-close-modal="" type="button">
             ×
           </button>
-        </div>
-        <div class="mechanics-modal-body previous-event-body">
-          <p>Relive the action, challenges, and memorable moments from our previous RC crawler event.</p>
-          <a
-            class="button button-primary previous-event-link"
-            href="https://www.facebook.com/reel/1852268948825526"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+</div>
+<div class="mechanics-modal-body previous-event-body">
+<p>Relive the action, challenges, and memorable moments from our previous RC crawler event.</p>
+<a class="button button-primary previous-event-link" href="https://www.facebook.com/reel/1852268948825526" rel="noopener noreferrer" target="_blank">
             Watch Previous Event Reel
           </a>
-        </div>
-      </div>
-    </div>
-
-
-    <div
-  id="adult-mechanics-modal"
-  class="mechanics-modal"
-  role="dialog"
-  aria-modal="true"
-  aria-labelledby="adult-mechanics-title"
-  aria-hidden="true">
-
-  <div class="mechanics-modal-backdrop" data-close-modal></div>
-
-  <div class="mechanics-modal-panel" role="document">
-
-    <div class="mechanics-modal-header">
-      <div>
-        <p class="eyebrow">ADULT CATEGORY</p>
-        <h2 id="adult-mechanics-title">
+</div>
+</div>
+</div>
+<div aria-hidden="true" aria-labelledby="adult-mechanics-title" aria-modal="true" class="mechanics-modal" id="adult-mechanics-modal" role="dialog">
+<div class="mechanics-modal-backdrop" data-close-modal=""></div>
+<div class="mechanics-modal-panel" role="document">
+<div class="mechanics-modal-header">
+<div>
+<p class="eyebrow">ADULT CATEGORY</p>
+<h2 id="adult-mechanics-title">
           Class 2 Pro-Stock Race Mechanics
         </h2>
-      </div>
-
-      <button
-        class="mechanics-modal-close"
-        type="button"
-        aria-label="Close race mechanics"
-        data-close-modal>
+</div>
+<button aria-label="Close race mechanics" class="mechanics-modal-close" data-close-modal="" type="button">
         ×
       </button>
-    </div>
-
-    <div class="mechanics-modal-body">
-
-      <section>
-        <h3>Vehicle Class</h3>
-        <p>
+</div>
+<div class="mechanics-modal-body">
+<section>
+<h3>Vehicle Class</h3>
+<p>
           Class 2 Pro-Stock (1/10 Scale)
         </p>
-        <p>
+<p>
           The Adult Category is open to 1/10 scale Class 2 Pro-Stock RC
           crawlers. All vehicles are subject to inspection before racing.
         </p>
-      </section>
-
-      <section>
-        <h3>General Specifications</h3>
-
-        <h4>Required</h4>
-
-        <ul>
-          <li>Front bumper is required.</li>
-          <li>Manufactured tires measuring 4.30"–4.75".</li>
-          <li>1.9" wheels only.</li>
-          <li>Maximum wheelbase: 355 mm.</li>
-          <li>Hardbody or Lexan body.</li>
-          <li>No scale points required.</li>
-          <li>Vehicle must pass technical inspection.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Not Allowed</h3>
-
-        <ul>
-          <li>No cheater body cut.</li>
-          <li>No DIG.</li>
-          <li>No Four-Wheel Steering (4WS).</li>
-          <li>No switchable Overdrive (OD).</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Pro-Stock Chassis Rules</h3>
-
-        <p>
+</section>
+<section>
+<h3>General Specifications</h3>
+<h4>Required</h4>
+<ul>
+<li>Front bumper is required.</li>
+<li>Manufactured tires measuring 4.30"–4.75".</li>
+<li>1.9" wheels only.</li>
+<li>Maximum wheelbase: 355 mm.</li>
+<li>Hardbody or Lexan body.</li>
+<li>No scale points required.</li>
+<li>Vehicle must pass technical inspection.</li>
+</ul>
+</section>
+<section>
+<h3>Not Allowed</h3>
+<ul>
+<li>No cheater body cut.</li>
+<li>No DIG.</li>
+<li>No Four-Wheel Steering (4WS).</li>
+<li>No switchable Overdrive (OD).</li>
+</ul>
+</section>
+<section>
+<h3>Pro-Stock Chassis Rules</h3>
+<p>
           Heavily modified, upgraded and tuned stock rigs are allowed,
           including RTR competition rigs and custom-built competition rigs,
           provided they comply with the Class 2 specifications.
         </p>
-
-        <ul>
-          <li>C-channel or Flat Rails are permitted.</li>
-          <li>Center Skid chassis only.</li>
-          <li>Forward Skid link geometry is not permitted.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Body Requirements</h3>
-
-        <h4>Full Body</h4>
-
-        <ul>
-          <li>
+<ul>
+<li>C-channel or Flat Rails are permitted.</li>
+<li>Center Skid chassis only.</li>
+<li>Forward Skid link geometry is not permitted.</li>
+</ul>
+</section>
+<section>
+<h3>Body Requirements</h3>
+<h4>Full Body</h4>
+<ul>
+<li>
             Coffin-style body shape (Cliffhanger, Tucked, Coyote or similar).
           </li>
-        </ul>
-
-        <h4>Cab Body</h4>
-
-        <ul>
-          <li>No exposed chassis rails.</li>
-          <li>Bed must extend at least between the chassis rails.</li>
-          <li>Bed sides are required.</li>
-          <li>Tailgate is optional.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Additional Requirements</h3>
-
-        <ul>
-          <li>No cheater body cut.</li>
-          <li>Tires may extend beyond the front bumper.</li>
-          <li>
+</ul>
+<h4>Cab Body</h4>
+<ul>
+<li>No exposed chassis rails.</li>
+<li>Bed must extend at least between the chassis rails.</li>
+<li>Bed sides are required.</li>
+<li>Tailgate is optional.</li>
+</ul>
+</section>
+<section>
+<h3>Additional Requirements</h3>
+<ul>
+<li>No cheater body cut.</li>
+<li>Tires may extend beyond the front bumper.</li>
+<li>
             Chassis (including bumper) must be approximately 3 mm wider than
             the body shell.
           </li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Vehicle Inspection</h3>
-
-        <p>
+</ul>
+</section>
+<section>
+<h3>Vehicle Inspection</h3>
+<p>
           Every vehicle will undergo inspection before racing. Vehicles that
           fail inspection must be corrected before being allowed to compete.
         </p>
-      </section>
-
-    </div>
-
-  </div>
-
+</section>
 </div>
-    <div
-      id="kids-mechanics-modal"
-      class="mechanics-modal"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="kids-mechanics-title"
-      aria-hidden="true"
-    >
-      <div class="mechanics-modal-backdrop" data-close-modal></div>
-      <div class="mechanics-modal-panel" role="document">
-        <div class="mechanics-modal-header">
-          <div>
-            <p class="eyebrow">KIDS CATEGORY</p>
-            <h2 id="kids-mechanics-title">Kids Category Race Mechanics</h2>
-          </div>
-          <button
-            class="mechanics-modal-close"
-            type="button"
-            aria-label="Close race mechanics"
-            data-close-modal
-          >
+</div>
+</div>
+<div aria-hidden="true" aria-labelledby="kids-mechanics-title" aria-modal="true" class="mechanics-modal" id="kids-mechanics-modal" role="dialog">
+<div class="mechanics-modal-backdrop" data-close-modal=""></div>
+<div class="mechanics-modal-panel" role="document">
+<div class="mechanics-modal-header">
+<div>
+<p class="eyebrow">KIDS CATEGORY</p>
+<h2 id="kids-mechanics-title">Kids Category Race Mechanics</h2>
+</div>
+<button aria-label="Close race mechanics" class="mechanics-modal-close" data-close-modal="" type="button">
             ×
           </button>
-        </div>
-
-        <div class="mechanics-modal-body">
-          <section>
-            <h3>Age Requirements</h3>
-            <p>4 years old to 12 years old.</p>
-          </section>
-
-          <section>
-            <h3>Vehicle Requirements</h3>
-            <ul>
-              <li>Open to 1/10 and 1/12 scale RC crawlers.</li>
-              <li>Depending on the number of participants, racers may be grouped by scale: 1/10 versus 1/10 and 1/12 versus 1/12. However, if there are insufficient participants in either scale, the organiser may combine both scales into a single race bracket.</li>
-              <li>The vehicle must be safe to operate and pass technical inspection before racing.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3>Race Format</h3>
-            <ul>
-              <li>The competition follows a 1 vs 1 elimination format.</li>
-              <li>Racers will be paired through a random draw before the start of the event.</li>
-              <li>Each match consists of two racers running simultaneously on identical courses.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3>Winning a Match</h3>
-            <p>The winner of each match is determined by:</p>
-            <ol>
-              <li>Successfully completing the course.</li>
-              <li>If both racers finish, the racer with the faster completion time advances.</li>
-              <li>If only one racer finishes within the time limit, that racer advances automatically.</li>
-              <li>If neither racer finishes, the racer who progresses farther through the course advances.</li>
-            </ol>
-          </section>
-
-          <section>
-            <h3>Tournament Progression</h3>
-            <ul>
-              <li>Winners advance to the next elimination round.</li>
-              <li>The tournament continues until only one racer remains.</li>
-              <li>Depending on the number of participants, the organiser may conduct quarterfinals, semifinals, and finals.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3>Time Limit</h3>
-            <p>Each match has a maximum time limit of 10 minutes.</p>
-          </section>
-
-          <section>
-            <h3>Penalties</h3>
-            <ul>
-              <li>Boundary violations</li>
-              <li>Unsportsmanlike conduct</li>
-              <li>Outside assistance</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3>Marshals' Decision</h3>
-            <ul>
-              <li>Course marshals monitor every run.</li>
-              <li>The marshal's decision regarding penalties, progress, and finish order is final.</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3>Awards</h3>
-            <ul>
-              <li>Champion</li>
-              <li>1st Runner-up</li>
-              <li>2nd Runner-up</li>
-            </ul>
-          </section>
-
-          <section>
-            <h3>Tie-breaker</h3>
-            <p>If two racers record exactly the same finishing time, the two racers will restart the race.</p>
-          </section>
-        </div>
-      </div>
-    </div>
-
-    <script src="script.js"></script>
-  </body>
+</div>
+<div class="mechanics-modal-body">
+<section>
+<h3>Age Requirements</h3>
+<p>4 years old to 12 years old.</p>
+</section>
+<section>
+<h3>Vehicle Requirements</h3>
+<ul>
+<li>Open to 1/10 and 1/12 scale RC crawlers.</li>
+<li>Depending on the number of participants, racers may be grouped by scale: 1/10 versus 1/10 and 1/12 versus 1/12. However, if there are insufficient participants in either scale, the organiser may combine both scales into a single race bracket.</li>
+<li>The vehicle must be safe to operate and pass technical inspection before racing.</li>
+</ul>
+</section>
+<section>
+<h3>Race Format</h3>
+<ul>
+<li>The competition follows a 1 vs 1 elimination format.</li>
+<li>Racers will be paired through a random draw before the start of the event.</li>
+<li>Each match consists of two racers running simultaneously on identical courses.</li>
+</ul>
+</section>
+<section>
+<h3>Winning a Match</h3>
+<p>The winner of each match is determined by:</p>
+<ol>
+<li>Successfully completing the course.</li>
+<li>If both racers finish, the racer with the faster completion time advances.</li>
+<li>If only one racer finishes within the time limit, that racer advances automatically.</li>
+<li>If neither racer finishes, the racer who progresses farther through the course advances.</li>
+</ol>
+</section>
+<section>
+<h3>Tournament Progression</h3>
+<ul>
+<li>Winners advance to the next elimination round.</li>
+<li>The tournament continues until only one racer remains.</li>
+<li>Depending on the number of participants, the organiser may conduct quarterfinals, semifinals, and finals.</li>
+</ul>
+</section>
+<section>
+<h3>Time Limit</h3>
+<p>Each match has a maximum time limit of 10 minutes.</p>
+</section>
+<section>
+<h3>Penalties</h3>
+<ul>
+<li>Boundary violations</li>
+<li>Unsportsmanlike conduct</li>
+<li>Outside assistance</li>
+</ul>
+</section>
+<section>
+<h3>Marshals' Decision</h3>
+<ul>
+<li>Course marshals monitor every run.</li>
+<li>The marshal's decision regarding penalties, progress, and finish order is final.</li>
+</ul>
+</section>
+<section>
+<h3>Awards</h3>
+<ul>
+<li>Champion</li>
+<li>1st Runner-up</li>
+<li>2nd Runner-up</li>
+</ul>
+</section>
+<section>
+<h3>Tie-breaker</h3>
+<p>If two racers record exactly the same finishing time, the two racers will restart the race.</p>
+</section>
+</div>
+</div>
+</div>
+<script src="script.js"></script>
+</body>
 </html>
