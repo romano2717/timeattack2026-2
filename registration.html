@@ -112,8 +112,27 @@
 
           <div class="form-field" id="kids-count-field" hidden>
             <label for="kidsCount">Number of Kids</label>
-            <input id="kidsCount" name="kidsCount" type="number" min="1" max="10" value="1" />
+            <input id="kidsCount" name="kidsCount" type="number" min="1" step="1" max="10" value="" />
           </div>
+
+          <section class="fee-breakdown" aria-live="polite">
+            <h3>Fee Breakdown</h3>
+
+            <div class="fee-breakdown-row">
+              <span>Base registration fee</span>
+              <strong id="baseFeeDisplay">₱0</strong>
+            </div>
+
+            <div class="fee-breakdown-row">
+              <span id="kidsAddonLabel">Kids add-on</span>
+              <strong id="kidsAddonFeeDisplay">₱0</strong>
+            </div>
+
+            <div class="fee-breakdown-row fee-breakdown-total">
+              <span>Total Registration Fee</span>
+              <strong id="totalFeeDisplay">₱0</strong>
+            </div>
+          </section>
 
           <div class="form-field">
             <label for="totalFee">Total Registration Fee</label>
@@ -133,6 +152,6 @@
     </div>
   </main>
 
-  <script src="registration.js?v=3"></script>
+  <script src="registration.js?v=4"></script>
 </body>
 </html>

@@ -35,3 +35,47 @@
   background: #eee4d2;
   border-color: rgba(239, 108, 34, .55);
 }
+
+
+.fee-breakdown {
+  margin: 8px 0 22px;
+  padding: 18px;
+  background: #f4ead8;
+  border: 1px solid rgba(42, 26, 16, .18);
+  border-left: 4px solid var(--orange);
+}
+
+.fee-breakdown h3 {
+  margin: 0 0 14px;
+  font-size: 1.25rem;
+}
+
+.fee-breakdown-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 9px 0;
+  border-bottom: 1px dashed rgba(42, 26, 16, .22);
+}
+
+.fee-breakdown-row span {
+  font-size: .9rem;
+}
+
+.fee-breakdown-row strong {
+  white-space: nowrap;
+}
+
+.fee-breakdown-total {
+  margin-top: 4px;
+  padding-top: 14px;
+  border-bottom: 0;
+  color: var(--mud-dark);
+  font-size: 1.08rem;
+}
+
+.fee-breakdown-total strong {
+  color: var(--orange);
+  font-size: 1.25rem;
+}

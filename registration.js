@@ -30,6 +30,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("kids-count-field");
   const kidsCountInput = document.getElementById("kidsCount");
   const totalFeeInput = document.getElementById("totalFee");
+  const baseFeeDisplay = document.getElementById("baseFeeDisplay");
+  const kidsAddonLabel = document.getElementById("kidsAddonLabel");
+  const kidsAddonFeeDisplay =
+    document.getElementById("kidsAddonFeeDisplay");
+  const totalFeeDisplay = document.getElementById("totalFeeDisplay");
   const statusText = document.getElementById("form-status");
   const submitButton = document.getElementById("submit-button");
 
@@ -41,6 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
     !kidsCountField ||
     !kidsCountInput ||
     !totalFeeInput ||
+    !baseFeeDisplay ||
+    !kidsAddonLabel ||
+    !kidsAddonFeeDisplay ||
+    !totalFeeDisplay ||
     !statusText ||
     !submitButton
   ) {
@@ -53,6 +62,10 @@ document.addEventListener("DOMContentLoaded", () => {
     registrationTypeInput.value = REGISTRATION_TYPE;
   }
 
+  function formatPeso(amount) {
+    return `₱${amount.toLocaleString("en-PH")}`;
+  }
+
   function calculateTotalFee() {
     const category = categoryInput.value;
 
@@ -62,67 +75,70 @@ document.addEventListener("DOMContentLoaded", () => {
     const numberOfKids = kidsAddonInput.checked
       ? Math.max(
           1,
-          Number.parseInt(kidsCountInput.value, 10) || 1,
+          Number.parseInt(kidsCountInput.value || "1", 10) || 1,
         )
       : 0;
 
-    const total =
-      baseFee + numberOfKids * KIDS_ADDON_PRICE;
+    const kidsAddonFee = numberOfKids * KIDS_ADDON_PRICE;
+    const total = baseFee + kidsAddonFee;
 
-    totalFeeInput.value = `₱${total.toLocaleString("en-PH")}`;
+    baseFeeDisplay.textContent = formatPeso(baseFee);
+    kidsAddonLabel.textContent = kidsAddonInput.checked
+      ? `Kids add-on (${numberOfKids} × ${formatPeso(KIDS_ADDON_PRICE)})`
+      : "Kids add-on";
+    kidsAddonFeeDisplay.textContent = formatPeso(kidsAddonFee);
+    totalFeeDisplay.textContent = formatPeso(total);
+
+    totalFeeInput.value = formatPeso(total);
     totalFeeInput.dataset.amount = String(total);
   }
 
-  function enforceMinimumKidsCount() {
-    if (!kidsAddonInput.checked) {
-      return;
-    }
-
-    const value = Number.parseInt(kidsCountInput.value, 10);
-
-    if (!Number.isInteger(value) || value < 1) {
-      kidsCountInput.value = "1";
-    }
-  }
-
   function updateKidsAddonFields() {
-    kidsCountField.hidden = !kidsAddonInput.checked;
-    kidsCountInput.required = kidsAddonInput.checked;
-
     if (kidsAddonInput.checked) {
-      // Always start at one child when the add-on is enabled.
-      kidsCountInput.value = "1";
+      kidsCountField.hidden = false;
+      kidsCountInput.required = true;
+
+      if (
+        kidsCountInput.value === "" ||
+        Number(kidsCountInput.value) < 1
+      ) {
+        kidsCountInput.value = "1";
+      }
     } else {
-      kidsCountInput.value = "1";
+      kidsCountField.hidden = true;
+      kidsCountInput.required = false;
+      kidsCountInput.value = "";
     }
 
     calculateTotalFee();
   }
 
   categoryInput.addEventListener("change", calculateTotalFee);
-  kidsAddonInput.addEventListener(
-    "change",
-    updateKidsAddonFields,
-  );
+  kidsAddonInput.addEventListener("change", updateKidsAddonFields);
   kidsCountInput.addEventListener("input", () => {
-    enforceMinimumKidsCount();
-    calculateTotalFee();
-  });
+    if (!kidsAddonInput.checked) {
+      kidsCountInput.value = "";
+      calculateTotalFee();
+      return;
+    }
 
-  kidsCountInput.addEventListener("change", () => {
-    enforceMinimumKidsCount();
+    if (kidsCountInput.value !== "") {
+      const parsedValue = Number.parseInt(kidsCountInput.value, 10);
+
+      if (!Number.isInteger(parsedValue) || parsedValue < 1) {
+        kidsCountInput.value = "1";
+      }
+    }
+
     calculateTotalFee();
   });
 
   kidsCountInput.addEventListener("blur", () => {
-    enforceMinimumKidsCount();
-    calculateTotalFee();
-  });
-
-  kidsCountInput.addEventListener("keydown", (event) => {
-    if (["-", "+", "e", "E", "."].includes(event.key)) {
-      event.preventDefault();
+    if (kidsAddonInput.checked && kidsCountInput.value === "") {
+      kidsCountInput.value = "1";
     }
+
+    calculateTotalFee();
   });
 
   form.addEventListener("submit", async (event) => {
@@ -171,7 +187,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       // Restore controlled/read-only values after reset.
       categoryInput.value = "Adult";
-      kidsCountInput.value = "1";
+      kidsCountInput.value = "";
       kidsCountField.hidden = true;
       kidsCountInput.required = false;
 
