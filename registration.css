@@ -85,3 +85,21 @@
   color: var(--orange);
   font-size: 1.25rem;
 }
+
+.registration-notice {
+  margin-top: 24px;
+  padding: 16px 18px;
+  border: 1px solid #d9b25f;
+  border-left: 5px solid #d97706;
+  background: #fff8e6;
+  border-radius: 8px;
+  color: #5b3b00;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.registration-notice strong {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
