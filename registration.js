@@ -1,5 +1,5 @@
 const GOOGLE_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxdsuMwyvYnad4VKe3SwgWF02br9ZFJTTkOf4yHvKil4GmsJu9y7wuxaTY5m_R3fJVJ/exec";
+  "https://script.google.com/macros/s/AKfycbwLNShT-Pl2EWRG5QgfCIj-WI3S7px_i5zFIB4KtAI4iBYvUo2SqVbIz6CW0uWbZ50Z/exec";
 
 // Change this one value when the registration period changes:
 // "Early", "Late", or "Walk-in"
