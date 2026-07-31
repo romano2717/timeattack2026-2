@@ -73,11 +73,26 @@ document.addEventListener("DOMContentLoaded", () => {
     totalFeeInput.dataset.amount = String(total);
   }
 
+  function enforceMinimumKidsCount() {
+    if (!kidsAddonInput.checked) {
+      return;
+    }
+
+    const value = Number.parseInt(kidsCountInput.value, 10);
+
+    if (!Number.isInteger(value) || value < 1) {
+      kidsCountInput.value = "1";
+    }
+  }
+
   function updateKidsAddonFields() {
     kidsCountField.hidden = !kidsAddonInput.checked;
     kidsCountInput.required = kidsAddonInput.checked;
 
-    if (!kidsAddonInput.checked) {
+    if (kidsAddonInput.checked) {
+      // Always start at one child when the add-on is enabled.
+      kidsCountInput.value = "1";
+    } else {
       kidsCountInput.value = "1";
     }
 
@@ -89,8 +104,26 @@ document.addEventListener("DOMContentLoaded", () => {
     "change",
     updateKidsAddonFields,
   );
-  kidsCountInput.addEventListener("input", calculateTotalFee);
-  kidsCountInput.addEventListener("change", calculateTotalFee);
+  kidsCountInput.addEventListener("input", () => {
+    enforceMinimumKidsCount();
+    calculateTotalFee();
+  });
+
+  kidsCountInput.addEventListener("change", () => {
+    enforceMinimumKidsCount();
+    calculateTotalFee();
+  });
+
+  kidsCountInput.addEventListener("blur", () => {
+    enforceMinimumKidsCount();
+    calculateTotalFee();
+  });
+
+  kidsCountInput.addEventListener("keydown", (event) => {
+    if (["-", "+", "e", "E", "."].includes(event.key)) {
+      event.preventDefault();
+    }
+  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
