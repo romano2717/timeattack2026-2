@@ -1,91 +1,293 @@
 const SHEET_NAME = "Registrations";
+const RECEIPT_FOLDER_ID =
+  "1QhENl73e9uamD5C9i6ad4Zd-7YravbGO";
+
+const MAX_RECEIPT_BYTES = 5 * 1024 * 1024;
+
+function doGet() {
+  return jsonResponse_({
+    success: true,
+    message: "MUDFEST registration service is running.",
+  });
+}
 
 function doPost(e) {
+  let receiptFile = null;
+
   try {
     if (!e || !e.parameter) {
-      throw new Error("No registration data was received.");
-    }
-
-    const sheet = SpreadsheetApp.getActiveSpreadsheet()
-      .getSheetByName(SHEET_NAME);
-
-    if (!sheet) {
-      throw new Error(`Sheet tab "${SHEET_NAME}" was not found.`);
+      throw new Error(
+        "No registration data was received.",
+      );
     }
 
     const data = e.parameter;
-    const requiredFields = [
-      "fullName",
-      "category",
-      "registrationType",
-      "shirtSize",
-      "paymentReference",
-    ];
 
-    requiredFields.forEach(function (field) {
-      if (!String(data[field] || "").trim()) {
-        throw new Error(`Missing required field: ${field}`);
-      }
-    });
+    if (data.action !== "submitRegistration") {
+      throw new Error("Unsupported action.");
+    }
 
-    const kidsCount = Number.parseInt(data.kidsCount || "0", 10);
+    validateRegistrationData_(data);
+
+    const registrationId =
+      String(data.registrationId).trim();
+    const kidsAddon =
+      data.kidsAddon === "Yes" ? "Yes" : "No";
+    const kidsCount =
+      kidsAddon === "Yes"
+        ? Number.parseInt(data.kidsCount || "0", 10)
+        : 0;
     const totalFee = Number(data.totalFee || 0);
 
-    if (!Number.isFinite(totalFee) || totalFee < 0) {
-      throw new Error("The total registration fee is invalid.");
+    receiptFile = saveReceipt_(
+      data,
+      registrationId,
+    );
+
+    const spreadsheet =
+      SpreadsheetApp.getActiveSpreadsheet();
+    const sheet =
+      spreadsheet.getSheetByName(SHEET_NAME);
+
+    if (!sheet) {
+      throw new Error(
+        `Sheet tab "${SHEET_NAME}" was not found.`,
+      );
     }
 
-    if (data.kidsAddon === "Yes" && (!Number.isInteger(kidsCount) || kidsCount < 1)) {
-      throw new Error("The number of kids must be at least 1.");
-    }
-
-    const registrationId = createRegistrationId_();
+    const receiptFileName =
+      receiptFile.getName();
+    const receiptUrl = receiptFile.getUrl();
 
     sheet.appendRow([
       new Date(),
       registrationId,
-      String(data.fullName).trim(),
-      data.category,
-      data.registrationType,
-      data.shirtSize,
-      data.kidsAddon || "No",
-      data.kidsAddon === "Yes" ? kidsCount : 0,
+      sanitizeCell_(data.fullName),
+      sanitizeCell_(data.category),
+      sanitizeCell_(data.registrationType),
+      sanitizeCell_(data.shirtSize),
+      kidsAddon,
+      kidsCount,
       totalFee,
-      String(data.paymentReference).trim(),
+      receiptFileName,
+      receiptUrl,
       data.submittedAt || "",
     ]);
 
+    SpreadsheetApp.flush();
+
     return jsonResponse_({
       success: true,
-      registrationId: registrationId,
-      message: "Registration saved successfully.",
+      registrationId,
+      receiptFileName,
+      receiptUrl,
+      message:
+        "Registration and receipt saved successfully.",
     });
   } catch (error) {
     console.error(error);
 
+    // Remove the receipt if saving the Sheet row fails.
+    if (receiptFile) {
+      try {
+        receiptFile.setTrashed(true);
+      } catch (cleanupError) {
+        console.error(
+          "Unable to remove orphan receipt:",
+          cleanupError,
+        );
+      }
+    }
+
     return jsonResponse_({
       success: false,
-      message: error && error.message
-        ? error.message
-        : "Unable to save the registration.",
+      message:
+        error && error.message
+          ? error.message
+          : "Unable to save the registration.",
     });
   }
 }
 
-function createRegistrationId_() {
-  const timezone = Session.getScriptTimeZone();
-  const timestamp = Utilities.formatDate(
-    new Date(),
-    timezone,
-    "yyyyMMdd-HHmmss",
-  );
-  const randomCode = Math.floor(1000 + Math.random() * 9000);
+function validateRegistrationData_(data) {
+  const requiredFields = [
+    "registrationId",
+    "fullName",
+    "category",
+    "registrationType",
+    "shirtSize",
+    "receiptBase64",
+  ];
 
-  return `MUD-${timestamp}-${randomCode}`;
+  requiredFields.forEach(function (field) {
+    if (!String(data[field] || "").trim()) {
+      throw new Error(
+        `Missing required field: ${field}`,
+      );
+    }
+  });
+
+  const allowedCategories = ["Adult", "Kid"];
+
+  if (
+    !allowedCategories.includes(
+      String(data.category).trim(),
+    )
+  ) {
+    throw new Error(
+      "Invalid participant category.",
+    );
+  }
+
+  const allowedRegistrationTypes = [
+    "Early",
+    "Late",
+    "Walk-in",
+  ];
+
+  if (
+    !allowedRegistrationTypes.includes(
+      String(data.registrationType).trim(),
+    )
+  ) {
+    throw new Error(
+      "Invalid registration type.",
+    );
+  }
+
+  const totalFee = Number(data.totalFee);
+
+  if (!Number.isFinite(totalFee) || totalFee < 0) {
+    throw new Error(
+      "Invalid total registration fee.",
+    );
+  }
+
+  if (data.kidsAddon === "Yes") {
+    const kidsCount = Number.parseInt(
+      data.kidsCount || "0",
+      10,
+    );
+
+    if (
+      !Number.isInteger(kidsCount) ||
+      kidsCount < 1 ||
+      kidsCount > 10
+    ) {
+      throw new Error(
+        "The number of kids must be from 1 to 10.",
+      );
+    }
+  }
+}
+
+function saveReceipt_(data, registrationId) {
+  const receiptBase64 = String(
+    data.receiptBase64 || "",
+  ).trim();
+
+  const receiptMimeType = String(
+    data.receiptMimeType || "image/jpeg",
+  ).trim();
+
+  const allowedMimeTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+  ];
+
+  if (
+    !allowedMimeTypes.includes(
+      receiptMimeType,
+    )
+  ) {
+    throw new Error(
+      "Unsupported receipt image type.",
+    );
+  }
+
+  const bytes =
+    Utilities.base64Decode(receiptBase64);
+
+  if (!bytes.length) {
+    throw new Error(
+      "The receipt image is empty.",
+    );
+  }
+
+  if (bytes.length > MAX_RECEIPT_BYTES) {
+    throw new Error(
+      "The receipt image exceeds the 5 MB limit.",
+    );
+  }
+
+  const extensionByMimeType = {
+    "image/jpeg": "jpg",
+    "image/png": "png",
+    "image/webp": "webp",
+  };
+
+  const extension =
+    extensionByMimeType[receiptMimeType];
+  const participantName =
+    sanitizeFileName_(data.fullName);
+  const fileName =
+    `${registrationId}-${participantName}.${extension}`;
+
+  const blob = Utilities.newBlob(
+    bytes,
+    receiptMimeType,
+    fileName,
+  );
+
+  const folder =
+    DriveApp.getFolderById(RECEIPT_FOLDER_ID);
+
+  return folder.createFile(blob);
+}
+
+function sanitizeCell_(value) {
+  const text = String(value || "").trim();
+
+  // Prevent spreadsheet formula injection.
+  if (/^[=+\-@]/.test(text)) {
+    return `'${text}`;
+  }
+
+  return text;
+}
+
+function sanitizeFileName_(value) {
+  return (
+    String(value || "")
+      .trim()
+      .replace(/[^a-zA-Z0-9_-]+/g, "-")
+      .replace(/^-+|-+$/g, "") ||
+    "participant"
+  );
 }
 
 function jsonResponse_(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
+}
+
+// Run this manually once if Apps Script asks for authorization.
+function authorizeDriveAndSheets() {
+  const folder =
+    DriveApp.getFolderById(RECEIPT_FOLDER_ID);
+  const sheet =
+    SpreadsheetApp
+      .getActiveSpreadsheet()
+      .getSheetByName(SHEET_NAME);
+
+  if (!sheet) {
+    throw new Error(
+      `Sheet tab "${SHEET_NAME}" was not found.`,
+    );
+  }
+
+  console.log(folder.getName());
+  console.log(sheet.getName());
 }
