@@ -1,5 +1,5 @@
 const GOOGLE_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwLNShT-Pl2EWRG5QgfCIj-WI3S7px_i5zFIB4KtAI4iBYvUo2SqVbIz6CW0uWbZ50Z/exec";
+  "https://script.google.com/macros/s/AKfycbwBCCH34xXjjYsbifahTZqONDTSk8ue9F1IXdMytkkCXGyRtG5XpFIDFm4nCmDf_x9E/exec";
 
 // Change this one value when the registration period changes:
 // "Early", "Late", or "Walk-in"
@@ -174,79 +174,75 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   form.addEventListener("submit", async (event) => {
-    event.preventDefault();
+  event.preventDefault();
 
+  submitButton.disabled = true;
+  statusText.textContent = "Submitting registration...";
+  statusText.className = "form-status";
+
+  try {
     calculateTotalFee();
 
-    if (GOOGLE_SCRIPT_URL.includes("PASTE_YOUR")) {
-      statusText.textContent =
-        "Google Sheets connection is not configured yet.";
-      statusText.className = "form-status error";
-      return;
-    }
-
-    submitButton.disabled = true;
-    submitButton.textContent = "Submitting...";
-    statusText.textContent = "";
-    statusText.className = "form-status";
-
-    const payload = {
-      fullName: form.elements.fullName.value.trim(),
+    const formData = {
+      registrationId: createRegistrationId(),
+      fullName: fullNameInput.value.trim(),
       category: categoryInput.value,
-      registrationType: REGISTRATION_TYPE,
-      shirtSize: form.elements.shirtSize.value,
-      kidsAddon: kidsAddonInput.checked ? "Yes" : "No",
-      kidsCount: kidsAddonInput.checked
-        ? kidsCountInput.value
-        : "0",
-      totalFee: totalFeeInput.dataset.amount || "0",
+      registrationType: registrationTypeInput.value,
+      shirtSize: shirtSizeInput.value,
+      kidsAddon:
+        categoryInput.value === "Adult" &&
+        kidsAddonInput.checked
+          ? "Yes"
+          : "No",
+      kidsCount:
+        categoryInput.value === "Adult" &&
+        kidsAddonInput.checked
+          ? kidsCountInput.value
+          : "",
+      totalFee: totalFeeInput.dataset.amount,
       paymentReference:
-        form.elements.paymentReference.value.trim(),
+        paymentReferenceInput.value.trim(),
       submittedAt: new Date().toISOString(),
     };
 
-    try {
-      const response = await fetch(GOOGLE_SCRIPT_URL, {
-        method: "POST",
-        body: new URLSearchParams(payload),
-      });
+    await fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: {
+        "Content-Type":
+          "application/x-www-form-urlencoded;charset=UTF-8",
+      },
+      body: new URLSearchParams(formData).toString(),
+    });
 
-      if (!response.ok) {
-        throw new Error(`Server returned HTTP ${response.status}.`);
-      }
+    statusText.textContent =
+      "Registration submitted. Please keep your GCash payment reference for verification.";
 
-      const result = await response.json();
+    statusText.className = "form-status success";
 
-      if (!result.success) {
-        throw new Error(result.message || "Google Sheets rejected the submission.");
-      }
+    registrationForm.reset();
 
-      form.reset();
+    kidsAddonInput.checked = false;
+    kidsCountInput.value = "";
+    kidsCountField.hidden = true;
+    kidsCountInput.required = false;
 
-      // Restore controlled/read-only values after reset.
-      categoryInput.value = "Adult";
-      kidsCountInput.value = "";
-      kidsCountField.hidden = true;
-      kidsCountInput.required = false;
+    updateRegistrationType();
+    updateCategoryFields();
+  } catch (error) {
+    console.error(
+      "Registration submission failed:",
+      error,
+    );
 
-      updateRegistrationType();
-      updateCategoryFields();
+    statusText.textContent =
+      "Unable to submit the registration. Please check your internet connection and try again.";
 
-      statusText.textContent = result.registrationId
-        ? `Registration submitted successfully. Registration ID: ${result.registrationId}`
-        : "Registration submitted successfully. Please wait for payment verification.";
-      statusText.className = "form-status success";
-    } catch (error) {
-      console.error("Registration submission failed:", error);
-
-      statusText.textContent =
-        "Unable to submit the registration. Please try again.";
-      statusText.className = "form-status error";
-    } finally {
-      submitButton.disabled = false;
-      submitButton.textContent = "Submit Registration";
-    }
-  });
+    statusText.className = "form-status error";
+  } finally {
+    submitButton.disabled = false;
+  }
+});
 
   updateRegistrationType();
   updateCategoryFields();
