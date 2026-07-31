@@ -78,6 +78,17 @@
           </div>
 
           <div class="form-field">
+            <label for="registrationType">Registration Type</label>
+            <input
+              id="registrationType"
+              name="registrationType"
+              type="text"
+              readonly
+              aria-readonly="true"
+            />
+          </div>
+
+          <div class="form-field">
             <label for="shirtSize">T-shirt Size</label>
             <select id="shirtSize" name="shirtSize" required>
               <option value="">Select size</option>
@@ -103,6 +114,11 @@
           <div class="form-field" id="kids-count-field" hidden>
             <label for="kidsCount">Number of Kids</label>
             <input id="kidsCount" name="kidsCount" type="number" min="1" max="10" value="1" />
+          </div>
+
+          <div class="form-field">
+            <label for="totalFee">Total Registration Fee</label>
+            <input id="totalFee" name="totalFee" type="text" value="₱0" readonly aria-readonly="true" />
           </div>
 
           <div class="form-field">

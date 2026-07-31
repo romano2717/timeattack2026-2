@@ -26,3 +26,12 @@
 .form-status.error { color:#a62828; }
 @media (max-width:850px){ .registration-layout{grid-template-columns:1fr;} }
 @media (max-width:680px){ .registration-header{align-items:flex-start; flex-direction:column;} .registration-header .button{width:100%;} .registration-main{padding-top:45px;} }
+
+
+#totalFee[readonly] {
+  cursor: not-allowed;
+  font-weight: 800;
+  color: var(--mud-dark);
+  background: #eee4d2;
+  border-color: rgba(239, 108, 34, .55);
+}

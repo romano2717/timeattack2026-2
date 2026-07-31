@@ -6,9 +6,11 @@ function doPost(e) {
     new Date(),
     data.fullName || '',
     data.category || '',
+    data.registrationType || '',
     data.shirtSize || '',
     data.kidsAddon || 'No',
     data.kidsCount || '0',
+    Number(data.totalFee || 0),
     data.paymentReference || '',
     data.submittedAt || ''
   ]);
