@@ -23,6 +23,7 @@ const REGISTRATION_FEES = {
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registration-form");
   const categoryInput = document.getElementById("category");
+  const fullNameInput = document.getElementById("fullName");
   const registrationTypeInput =
     document.getElementById("registrationType");
   const kidsAddonInput = document.getElementById("kidsAddon");
