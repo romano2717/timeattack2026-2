@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     statusText.className = "form-status success";
 
-    registrationForm.reset();
+    form.reset();
 
     kidsAddonInput.checked = false;
     kidsCountInput.value = "";
