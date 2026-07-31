@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const categoryInput = document.getElementById("category");
   const fullNameInput = document.getElementById("fullName");
   const shirtSizeInput = document.getElementById("shirtSize");
+  const paymentReferenceInput = document.getElementById("paymentReference");
   const registrationTypeInput =
     document.getElementById("registrationType");
   const kidsAddonInput = document.getElementById("kidsAddon");
