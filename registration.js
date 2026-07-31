@@ -1,5 +1,5 @@
 const GOOGLE_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbxdsuMwyvYnad4VKe3SwgWF02br9ZFJTTkOf4yHvKil4GmsJu9y7wuxaTY5m_R3fJVJ/exec";
+  "PASTE_YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE";
 
 // Change this one value when the registration period changes:
 // "Early", "Late", or "Walk-in"
@@ -74,7 +74,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const baseFee =
       REGISTRATION_FEES[category]?.[REGISTRATION_TYPE] ?? 0;
 
-    const numberOfKids = kidsAddonInput.checked
+    const numberOfKids =
+      category === "Adult" && kidsAddonInput.checked
       ? Math.max(
           1,
           Number.parseInt(kidsCountInput.value || "1", 10) || 1,
@@ -97,6 +98,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
   function updateCategoryFields() {
+    updateRegistrationType();
+
     const isAdult = categoryInput.value === "Adult";
 
     kidsAddonContainer.hidden = !isAdult;
@@ -114,6 +117,15 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateKidsAddonFields() {
+    if (categoryInput.value !== "Adult") {
+      kidsAddonInput.checked = false;
+      kidsCountField.hidden = true;
+      kidsCountInput.required = false;
+      kidsCountInput.value = "";
+      calculateTotalFee();
+      return;
+    }
+
     if (kidsAddonInput.checked) {
       kidsCountField.hidden = false;
       kidsCountInput.required = true;

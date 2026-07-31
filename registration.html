@@ -82,12 +82,14 @@
               id="registrationType"
               name="registrationType"
               type="text"
+              value=""
               readonly
               aria-readonly="true"
+              tabindex="-1"
             />
           </div>
 
-          <div class="form-field id="kidsAddonContainer">
+          <div class="form-field">
             <label for="shirtSize">T-shirt Size</label>
             <select id="shirtSize" name="shirtSize" required>
               <option value="">Select size</option>
@@ -105,10 +107,12 @@
             </select>
           </div>
 
-          <label class="checkbox-field">
-            <input id="kidsAddon" name="kidsAddon" type="checkbox" />
-            <span>Add Kids Category entry (+₱100)</span>
-          </label>
+          <div id="kidsAddonContainer">
+            <label class="checkbox-field">
+              <input id="kidsAddon" name="kidsAddon" type="checkbox" />
+              <span>Add Kids Category entry (+₱100)</span>
+            </label>
+          </div>
 
           <div class="form-field" id="kids-count-field" hidden>
             <label for="kidsCount">Number of Kids</label>
@@ -136,7 +140,7 @@
 
           <div class="form-field">
             <label for="totalFee">Total Registration Fee</label>
-            <input id="totalFee" name="totalFee" type="text" value="₱0" readonly aria-readonly="true" />
+            <input id="totalFee" name="totalFee" type="text" value="₱0" readonly aria-readonly="true" tabindex="-1" />
           </div>
 
           <div class="form-field">
@@ -152,6 +156,6 @@
     </div>
   </main>
 
-  <script src="registration.js?v=5"></script>
+  <script src="registration.js?v=6"></script>
 </body>
 </html>
