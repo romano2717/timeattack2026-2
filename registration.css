@@ -1,3 +1,9 @@
+
+/* Always honor the HTML hidden attribute, even on grid/flex elements. */
+[hidden] {
+  display: none !important;
+}
+
 .registration-page { background: var(--surface); color: var(--ink); }
 .registration-header { min-height: 74px; display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px clamp(18px,4vw,64px); background:var(--mud-dark); color:var(--white); border-bottom:3px solid var(--orange); }
 .registration-main { padding:70px 0 100px; }
