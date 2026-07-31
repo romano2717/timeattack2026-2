@@ -59,6 +59,22 @@ document.addEventListener("DOMContentLoaded", () => {
     return;
   }
 
+  function createRegistrationId() {
+    const now = new Date();
+
+    const yyyy = now.getFullYear();
+    const mm = String(now.getMonth() + 1).padStart(2, "0");
+    const dd = String(now.getDate()).padStart(2, "0");
+
+    const hh = String(now.getHours()).padStart(2, "0");
+    const min = String(now.getMinutes()).padStart(2, "0");
+    const ss = String(now.getSeconds()).padStart(2, "0");
+
+    const random = Math.floor(1000 + Math.random() * 9000);
+
+    return `MUD-${yyyy}${mm}${dd}-${hh}${min}${ss}-${random}`;
+  }
+
   function updateRegistrationType() {
     // readonly only blocks user typing; JavaScript can still update .value
     registrationTypeInput.value = REGISTRATION_TYPE;
