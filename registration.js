@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
       calculateTotalFee();
 
       statusText.textContent =
-        "Registration submitted successfully. Please wait for payment verification.";
+        "Registration submitted successfully.";
       statusText.className = "form-status success";
     } catch (error) {
       console.error("Registration submission failed:", error);
