@@ -6,6 +6,7 @@ const GOOGLE_SCRIPT_URL =
 const REGISTRATION_TYPE = "Early";
 
 const KIDS_ADDON_PRICE = 100;
+const ADDITIONAL_TRUCK_PRICE = 200;
 const MAX_RECEIPT_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_RECEIPT_DIMENSION = 1600;
 const RECEIPT_JPEG_QUALITY = 0.82;
@@ -35,11 +36,17 @@ document.addEventListener("DOMContentLoaded", () => {
   const registrationTypeInput =
     document.getElementById("registrationType");
   const kidsAddonInput = document.getElementById("kidsAddon");
-  const kidsAddonContainer =
-    document.getElementById("kidsAddonContainer");
+  const adultAddonsContainer =
+    document.getElementById("adultAddonsContainer");
   const kidsCountField =
     document.getElementById("kids-count-field");
   const kidsCountInput = document.getElementById("kidsCount");
+  const additionalTruckInput =
+    document.getElementById("additionalTruck");
+  const additionalTruckCountField =
+    document.getElementById("additional-truck-count-field");
+  const additionalTruckCountInput =
+    document.getElementById("additionalTruckCount");
   const totalFeeInput = document.getElementById("totalFee");
   const baseFeeDisplay =
     document.getElementById("baseFeeDisplay");
@@ -47,6 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("kidsAddonLabel");
   const kidsAddonFeeDisplay =
     document.getElementById("kidsAddonFeeDisplay");
+  const additionalTruckLabel =
+    document.getElementById("additionalTruckLabel");
+  const additionalTruckFeeDisplay =
+    document.getElementById("additionalTruckFeeDisplay");
   const totalFeeDisplay =
     document.getElementById("totalFeeDisplay");
   const statusText = document.getElementById("form-status");
@@ -61,13 +72,18 @@ document.addEventListener("DOMContentLoaded", () => {
     !paymentReceiptPreview ||
     !registrationTypeInput ||
     !kidsAddonInput ||
-    !kidsAddonContainer ||
+    !adultAddonsContainer ||
     !kidsCountField ||
     !kidsCountInput ||
+    !additionalTruckInput ||
+    !additionalTruckCountField ||
+    !additionalTruckCountInput ||
     !totalFeeInput ||
     !baseFeeDisplay ||
     !kidsAddonLabel ||
     !kidsAddonFeeDisplay ||
+    !additionalTruckLabel ||
+    !additionalTruckFeeDisplay ||
     !totalFeeDisplay ||
     !statusText ||
     !submitButton
@@ -110,46 +126,88 @@ document.addEventListener("DOMContentLoaded", () => {
       category === "Adult" && kidsAddonInput.checked
         ? Math.max(
             1,
-            Number.parseInt(kidsCountInput.value || "1", 10) ||
-              1,
+            Number.parseInt(
+              kidsCountInput.value || "1",
+              10,
+            ) || 1,
+          )
+        : 0;
+
+    const numberOfAdditionalTrucks =
+      category === "Adult" && additionalTruckInput.checked
+        ? Math.max(
+            1,
+            Number.parseInt(
+              additionalTruckCountInput.value || "1",
+              10,
+            ) || 1,
           )
         : 0;
 
     const kidsAddonFee =
       numberOfKids * KIDS_ADDON_PRICE;
 
-    const total = baseFee + kidsAddonFee;
+    const additionalTruckFee =
+      numberOfAdditionalTrucks *
+      ADDITIONAL_TRUCK_PRICE;
 
-    baseFeeDisplay.textContent = formatPeso(baseFee);
+    const total =
+      baseFee +
+      kidsAddonFee +
+      additionalTruckFee;
 
-    kidsAddonLabel.textContent = kidsAddonInput.checked
-      ? `Kids add-on (${numberOfKids} × ${formatPeso(
-          KIDS_ADDON_PRICE,
-        )})`
-      : "Kids add-on";
+    baseFeeDisplay.textContent =
+      formatPeso(baseFee);
+
+    kidsAddonLabel.textContent =
+      kidsAddonInput.checked
+        ? `Kids add-on (${numberOfKids} × ${formatPeso(
+            KIDS_ADDON_PRICE,
+          )})`
+        : "Kids add-on";
 
     kidsAddonFeeDisplay.textContent =
       formatPeso(kidsAddonFee);
 
-    totalFeeDisplay.textContent = formatPeso(total);
-    totalFeeInput.value = formatPeso(total);
-    totalFeeInput.dataset.amount = String(total);
+    additionalTruckLabel.textContent =
+      additionalTruckInput.checked
+        ? `Additional Truck (${numberOfAdditionalTrucks} × ${formatPeso(
+            ADDITIONAL_TRUCK_PRICE,
+          )})`
+        : "Additional Truck";
+
+    additionalTruckFeeDisplay.textContent =
+      formatPeso(additionalTruckFee);
+
+    totalFeeDisplay.textContent =
+      formatPeso(total);
+
+    totalFeeInput.value =
+      formatPeso(total);
+
+    totalFeeInput.dataset.amount =
+      String(total);
   }
 
   function updateCategoryFields() {
     updateRegistrationType();
 
     const isAdult = categoryInput.value === "Adult";
-
-    kidsAddonContainer.hidden = !isAdult;
+    adultAddonsContainer.hidden = !isAdult;
 
     if (!isAdult) {
       kidsAddonInput.checked = false;
       kidsCountField.hidden = true;
       kidsCountInput.required = false;
       kidsCountInput.value = "";
+
+      additionalTruckInput.checked = false;
+      additionalTruckCountField.hidden = true;
+      additionalTruckCountInput.required = false;
+      additionalTruckCountInput.value = "";
     } else {
       updateKidsAddonFields();
+      updateAdditionalTruckFields();
     }
 
     calculateTotalFee();
@@ -161,7 +219,6 @@ document.addEventListener("DOMContentLoaded", () => {
       kidsCountField.hidden = true;
       kidsCountInput.required = false;
       kidsCountInput.value = "";
-
       calculateTotalFee();
       return;
     }
@@ -185,31 +242,38 @@ document.addEventListener("DOMContentLoaded", () => {
     calculateTotalFee();
   }
 
+  function updateAdditionalTruckFields() {
+    if (categoryInput.value !== "Adult") {
+      additionalTruckInput.checked = false;
+      additionalTruckCountField.hidden = true;
+      additionalTruckCountInput.required = false;
+      additionalTruckCountInput.value = "";
+      calculateTotalFee();
+      return;
+    }
+
+    if (additionalTruckInput.checked) {
+      additionalTruckCountField.hidden = false;
+      additionalTruckCountInput.required = true;
+
+      if (
+        additionalTruckCountInput.value === "" ||
+        Number(additionalTruckCountInput.value) < 1
+      ) {
+        additionalTruckCountInput.value = "1";
+      }
+    } else {
+      additionalTruckCountField.hidden = true;
+      additionalTruckCountInput.required = false;
+      additionalTruckCountInput.value = "";
+    }
+
+    calculateTotalFee();
+  }
+
   function clearReceiptPreview() {
     paymentReceiptPreview.removeAttribute("src");
     paymentReceiptPreview.hidden = true;
-  }
-
-  function resetRegistrationForm() {
-    form.reset();
-
-    categoryInput.value = "Adult";
-    registrationTypeInput.value = REGISTRATION_TYPE;
-    shirtSizeInput.selectedIndex = 0;
-
-    kidsAddonInput.checked = false;
-    kidsAddonContainer.hidden = false;
-
-    kidsCountInput.value = "";
-    kidsCountInput.required = false;
-    kidsCountField.hidden = true;
-
-    paymentReceiptInput.value = "";
-    clearReceiptPreview();
-
-    updateRegistrationType();
-    updateCategoryFields();
-    calculateTotalFee();
   }
 
   function validateReceiptFile(file) {
@@ -242,17 +306,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
 
-      reader.onload = () => {
-        resolve(String(reader.result));
-      };
-
-      reader.onerror = () => {
+      reader.onload = () => resolve(String(reader.result));
+      reader.onerror = () =>
         reject(
           new Error(
             "Unable to read the selected receipt image.",
           ),
         );
-      };
 
       reader.readAsDataURL(file);
     });
@@ -262,17 +322,13 @@ document.addEventListener("DOMContentLoaded", () => {
     return new Promise((resolve, reject) => {
       const image = new Image();
 
-      image.onload = () => {
-        resolve(image);
-      };
-
-      image.onerror = () => {
+      image.onload = () => resolve(image);
+      image.onerror = () =>
         reject(
           new Error(
             "The selected receipt image could not be processed.",
           ),
         );
-      };
 
       image.src = dataUrl;
     });
@@ -283,7 +339,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const originalDataUrl = await readFileAsDataUrl(file);
     const image = await loadImage(originalDataUrl);
-
     const scale = Math.min(
       1,
       MAX_RECEIPT_DIMENSION /
@@ -294,14 +349,12 @@ document.addEventListener("DOMContentLoaded", () => {
       1,
       Math.round(image.width * scale),
     );
-
     const height = Math.max(
       1,
       Math.round(image.height * scale),
     );
 
     const canvas = document.createElement("canvas");
-
     canvas.width = width;
     canvas.height = height;
 
@@ -315,13 +368,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     context.drawImage(image, 0, 0, width, height);
 
-    const compressedDataUrl = canvas.toDataURL(
-      "image/jpeg",
-      RECEIPT_JPEG_QUALITY,
-    );
-
     return {
-      base64: compressedDataUrl.split(",")[1],
+      base64: canvas
+        .toDataURL(
+          "image/jpeg",
+          RECEIPT_JPEG_QUALITY,
+        )
+        .split(",")[1],
       mimeType: "image/jpeg",
     };
   }
@@ -332,12 +385,10 @@ document.addEventListener("DOMContentLoaded", () => {
         `mudfest-submit-${Date.now()}`;
 
       const iframe = document.createElement("iframe");
-
       iframe.name = iframeName;
       iframe.hidden = true;
 
       const postForm = document.createElement("form");
-
       postForm.method = "POST";
       postForm.action = GOOGLE_SCRIPT_URL;
       postForm.target = iframeName;
@@ -345,21 +396,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
       Object.entries(data).forEach(([name, value]) => {
         const input = document.createElement("input");
-
         input.type = "hidden";
         input.name = name;
         input.value = String(value ?? "");
-
         postForm.appendChild(input);
       });
 
       let resolved = false;
 
       const finish = () => {
-        if (resolved) {
-          return;
-        }
-
+        if (resolved) return;
         resolved = true;
 
         setTimeout(() => {
@@ -376,14 +422,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
       document.body.appendChild(iframe);
       document.body.appendChild(postForm);
-
       postForm.submit();
 
-      /*
-       * The Apps Script response cannot be read because it is
-       * cross-origin. This fallback resolves the promise after
-       * the browser has had time to submit the hidden form.
-       */
+      // Apps Script's cross-origin response cannot be read.
       setTimeout(finish, 4000);
     });
   }
@@ -392,31 +433,23 @@ document.addEventListener("DOMContentLoaded", () => {
     "change",
     async () => {
       clearReceiptPreview();
-
       statusText.textContent = "";
       statusText.className = "form-status";
 
       const file = paymentReceiptInput.files?.[0];
 
-      if (!file) {
-        return;
-      }
+      if (!file) return;
 
       try {
         validateReceiptFile(file);
-
         paymentReceiptPreview.src =
           await readFileAsDataUrl(file);
-
         paymentReceiptPreview.hidden = false;
       } catch (error) {
         paymentReceiptInput.value = "";
-        clearReceiptPreview();
-
         statusText.textContent =
           error?.message ||
           "Unable to use the selected receipt.";
-
         statusText.className = "form-status error";
       }
     },
@@ -430,6 +463,51 @@ document.addEventListener("DOMContentLoaded", () => {
   kidsAddonInput.addEventListener(
     "change",
     updateKidsAddonFields,
+  );
+
+  additionalTruckInput.addEventListener(
+    "change",
+    updateAdditionalTruckFields,
+  );
+
+  additionalTruckCountInput.addEventListener(
+    "input",
+    () => {
+      if (!additionalTruckInput.checked) {
+        additionalTruckCountInput.value = "";
+        calculateTotalFee();
+        return;
+      }
+
+      if (additionalTruckCountInput.value !== "") {
+        const value = Number.parseInt(
+          additionalTruckCountInput.value,
+          10,
+        );
+
+        if (!Number.isInteger(value) || value < 1) {
+          additionalTruckCountInput.value = "1";
+        } else if (value > 10) {
+          additionalTruckCountInput.value = "10";
+        }
+      }
+
+      calculateTotalFee();
+    },
+  );
+
+  additionalTruckCountInput.addEventListener(
+    "blur",
+    () => {
+      if (
+        additionalTruckInput.checked &&
+        additionalTruckCountInput.value === ""
+      ) {
+        additionalTruckCountInput.value = "1";
+      }
+
+      calculateTotalFee();
+    },
   );
 
   kidsCountInput.addEventListener("input", () => {
@@ -447,10 +525,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!Number.isInteger(value) || value < 1) {
         kidsCountInput.value = "1";
-      }
-
-      if (value > 10) {
-        kidsCountInput.value = "10";
       }
     }
 
@@ -472,10 +546,8 @@ document.addEventListener("DOMContentLoaded", () => {
     event.preventDefault();
 
     submitButton.disabled = true;
-
     statusText.textContent =
       "Preparing receipt and submitting registration. PLEASE WAIT...";
-
     statusText.className = "form-status";
 
     try {
@@ -483,10 +555,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
       const receiptFile =
         paymentReceiptInput.files?.[0];
-
       const receipt =
         await prepareReceipt(receiptFile);
-
       const registrationId =
         createRegistrationId();
 
@@ -508,6 +578,16 @@ document.addEventListener("DOMContentLoaded", () => {
           kidsAddonInput.checked
             ? kidsCountInput.value
             : "0",
+        additionalTruck:
+          categoryInput.value === "Adult" &&
+          additionalTruckInput.checked
+            ? "Yes"
+            : "No",
+        additionalTruckCount:
+          categoryInput.value === "Adult" &&
+          additionalTruckInput.checked
+            ? additionalTruckCountInput.value
+            : "0",
         totalFee:
           totalFeeInput.dataset.amount || "0",
         receiptMimeType: receipt.mimeType,
@@ -518,11 +598,24 @@ document.addEventListener("DOMContentLoaded", () => {
       await postToAppsScript(submission);
 
       statusText.textContent =
-        `Registration ID ${registrationId} was submitted successfully. Screenshot this Registration ID for verification`;
-
+        `Registration ${registrationId} was submitted. ` +
+        "Your receipt will be verified by the organizers.";
       statusText.className = "form-status success";
 
-      resetRegistrationForm();
+      form.reset();
+      clearReceiptPreview();
+      kidsAddonInput.checked = false;
+      kidsCountInput.value = "";
+      kidsCountField.hidden = true;
+      kidsCountInput.required = false;
+
+      additionalTruckInput.checked = false;
+      additionalTruckCountInput.value = "";
+      additionalTruckCountField.hidden = true;
+      additionalTruckCountInput.required = false;
+
+      updateRegistrationType();
+      updateCategoryFields();
     } catch (error) {
       console.error(
         "Registration submission failed:",
@@ -532,7 +625,6 @@ document.addEventListener("DOMContentLoaded", () => {
       statusText.textContent =
         error?.message ||
         "Unable to submit the registration. Please try again.";
-
       statusText.className = "form-status error";
     } finally {
       submitButton.disabled = false;

@@ -37,6 +37,15 @@ function doPost(e) {
       kidsAddon === "Yes"
         ? Number.parseInt(data.kidsCount || "0", 10)
         : 0;
+    const additionalTruck =
+      data.additionalTruck === "Yes" ? "Yes" : "No";
+    const additionalTruckCount =
+      additionalTruck === "Yes"
+        ? Number.parseInt(
+            data.additionalTruckCount || "0",
+            10,
+          )
+        : 0;
     const totalFee = Number(data.totalFee || 0);
 
     receiptFile = saveReceipt_(
@@ -55,6 +64,8 @@ function doPost(e) {
       );
     }
 
+    ensureAdditionalTruckHeaders_(sheet);
+
     const receiptFileName =
       receiptFile.getName();
     const receiptUrl = receiptFile.getUrl();
@@ -72,6 +83,8 @@ function doPost(e) {
       receiptFileName,
       receiptUrl,
       data.submittedAt || "",
+      additionalTruck,
+      additionalTruckCount,
     ]);
 
     SpreadsheetApp.flush();
@@ -170,6 +183,7 @@ function validateRegistrationData_(data) {
     );
 
     if (
+      String(data.category).trim() !== "Adult" ||
       !Number.isInteger(kidsCount) ||
       kidsCount < 1 ||
       kidsCount > 10
@@ -178,6 +192,36 @@ function validateRegistrationData_(data) {
         "The number of kids must be from 1 to 10.",
       );
     }
+  }
+
+  if (data.additionalTruck === "Yes") {
+    const additionalTruckCount = Number.parseInt(
+      data.additionalTruckCount || "0",
+      10,
+    );
+
+    if (
+      String(data.category).trim() !== "Adult" ||
+      !Number.isInteger(additionalTruckCount) ||
+      additionalTruckCount < 1 ||
+      additionalTruckCount > 10
+    ) {
+      throw new Error(
+        "The number of additional trucks must be from 1 to 10.",
+      );
+    }
+  }
+}
+
+function ensureAdditionalTruckHeaders_(sheet) {
+  if (!sheet.getRange("M1").getValue()) {
+    sheet.getRange("M1").setValue("Additional Truck");
+  }
+
+  if (!sheet.getRange("N1").getValue()) {
+    sheet
+      .getRange("N1")
+      .setValue("Number of Additional Trucks");
   }
 }
 
