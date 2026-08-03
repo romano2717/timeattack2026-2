@@ -10,7 +10,6 @@ const ADDITIONAL_TRUCK_PRICE = 200;
 const MAX_RECEIPT_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_RECEIPT_DIMENSION = 1600;
 const RECEIPT_JPEG_QUALITY = 0.82;
-const MAX_ADDITIONALS = 2;
 
 const REGISTRATION_FEES = {
   Adult: {
@@ -27,6 +26,8 @@ const REGISTRATION_FEES = {
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registration-form");
+  const registrationFormCard =
+    document.getElementById("registrationFormCard");
   const categoryInput = document.getElementById("category");
   const fullNameInput = document.getElementById("fullName");
   const shirtSizeInput = document.getElementById("shirtSize");
@@ -34,8 +35,12 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("paymentReceipt");
   const paymentReceiptPreview =
     document.getElementById("paymentReceiptPreview");
-  const registrationTypeInput =
-    document.getElementById("registrationType");
+  const registrationTypeBadge =
+    document.getElementById("registrationTypeBadge");
+  const registrationTypeBadgeLabel =
+    document.getElementById("registrationTypeBadgeLabel");
+  const registrationTypeBadgeFee =
+    document.getElementById("registrationTypeBadgeFee");
   const kidsAddonInput = document.getElementById("kidsAddon");
   const adultAddonsContainer =
     document.getElementById("adultAddonsContainer");
@@ -69,17 +74,20 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("generatedReceiptPreview");
   const downloadReceiptButton =
     document.getElementById("downloadReceiptButton");
-  const shareReceiptButton =
-    document.getElementById("shareReceiptButton");
+  const registerAnotherButton =
+    document.getElementById("registerAnotherButton");
 
   if (
     !form ||
+    !registrationFormCard ||
     !categoryInput ||
     !fullNameInput ||
     !shirtSizeInput ||
     !paymentReceiptInput ||
     !paymentReceiptPreview ||
-    !registrationTypeInput ||
+    !registrationTypeBadge ||
+    !registrationTypeBadgeLabel ||
+    !registrationTypeBadgeFee ||
     !kidsAddonInput ||
     !adultAddonsContainer ||
     !kidsCountField ||
@@ -99,7 +107,7 @@ document.addEventListener("DOMContentLoaded", () => {
     !generatedReceiptSection ||
     !generatedReceiptPreview ||
     !downloadReceiptButton ||
-    !shareReceiptButton
+    !registerAnotherButton
   ) {
     console.error(
       "One or more registration form elements are missing.",
@@ -121,8 +129,21 @@ document.addEventListener("DOMContentLoaded", () => {
     return `MUD-${yyyy}${mm}${dd}-${hh}${min}${ss}-${random}`;
   }
 
-  function updateRegistrationType() {
-    registrationTypeInput.value = REGISTRATION_TYPE;
+  function updateRegistrationTypeBadge() {
+    const category = categoryInput.value || "Adult";
+    const baseFee =
+      REGISTRATION_FEES[category]?.[REGISTRATION_TYPE] ?? 0;
+
+    registrationTypeBadgeLabel.textContent =
+      REGISTRATION_TYPE.toUpperCase();
+
+    registrationTypeBadgeFee.textContent =
+      `${formatPeso(baseFee)} ENTRY`;
+
+    registrationTypeBadge.setAttribute(
+      "aria-label",
+      `${REGISTRATION_TYPE} registration, ${formatPeso(baseFee)} base fee`,
+    );
   }
 
   function formatPeso(amount) {
@@ -203,7 +224,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function updateCategoryFields() {
-    updateRegistrationType();
+    updateRegistrationTypeBadge();
 
     const isAdult = categoryInput.value === "Adult";
     adultAddonsContainer.hidden = !isAdult;
@@ -240,12 +261,7 @@ document.addEventListener("DOMContentLoaded", () => {
       kidsCountField.hidden = false;
       kidsCountInput.required = true;
 
-      if (
-        kidsCountInput.value === "" ||
-        Number(kidsCountInput.value) < 1
-      ) {
-        kidsCountInput.value = "1";
-      }
+      kidsCountInput.value = "1";
     } else {
       kidsCountField.hidden = true;
       kidsCountInput.required = false;
@@ -269,12 +285,7 @@ document.addEventListener("DOMContentLoaded", () => {
       additionalTruckCountField.hidden = false;
       additionalTruckCountInput.required = true;
 
-      if (
-        additionalTruckCountInput.value === "" ||
-        Number(additionalTruckCountInput.value) < 1
-      ) {
-        additionalTruckCountInput.value = "1";
-      }
+      additionalTruckCountInput.value = "1";
     } else {
       additionalTruckCountField.hidden = true;
       additionalTruckCountInput.required = false;
@@ -889,45 +900,7 @@ document.addEventListener("DOMContentLoaded", () => {
     downloadReceiptButton.href = objectUrl;
     downloadReceiptButton.download = fileName;
 
-    if (
-      navigator.share &&
-      navigator.canShare &&
-      typeof File !== "undefined"
-    ) {
-      const receiptFile = new File(
-        [blob],
-        fileName,
-        { type: "image/png" },
-      );
-
-      if (navigator.canShare({ files: [receiptFile] })) {
-        shareReceiptButton.hidden = true;
-        shareReceiptButton.onclick = async () => {
-          try {
-            await navigator.share({
-              title: "MUDFEST Registration Receipt",
-              text: submission.registrationId,
-              files: [receiptFile],
-            });
-          } catch (error) {
-            if (error?.name !== "AbortError") {
-              console.error(
-                "Unable to share receipt:",
-                error,
-              );
-            }
-          }
-        };
-      }
-    }
-
-    const autoDownload = document.createElement("a");
-    autoDownload.href = objectUrl;
-    autoDownload.download = fileName;
-    autoDownload.style.display = "none";
-    document.body.appendChild(autoDownload);
-    autoDownload.click();
-    autoDownload.remove();
+    registrationFormCard.classList.add("is-complete");
 
     generatedReceiptSection.scrollIntoView({
       behavior: "smooth",
@@ -1027,79 +1000,14 @@ document.addEventListener("DOMContentLoaded", () => {
   );
 
   additionalTruckCountInput.addEventListener(
-    "input",
-    () => {
-      if (!additionalTruckInput.checked) {
-        additionalTruckCountInput.value = "";
-        calculateTotalFee();
-        return;
-      }
-
-      if (additionalTruckCountInput.value !== "") {
-        const value = Number.parseInt(
-          additionalTruckCountInput.value,
-          10,
-        );
-
-        if (!Number.isInteger(value) || value < 1) {
-          additionalTruckCountInput.value = "1";
-        } else if (value > MAX_ADDITIONALS) {
-          additionalTruckCountInput.value = MAX_ADDITIONALS;
-        }
-      }
-
-      calculateTotalFee();
-    },
+    "change",
+    calculateTotalFee,
   );
 
-  additionalTruckCountInput.addEventListener(
-    "blur",
-    () => {
-      if (
-        additionalTruckInput.checked &&
-        additionalTruckCountInput.value === ""
-      ) {
-        additionalTruckCountInput.value = "1";
-      }
-
-      calculateTotalFee();
-    },
+  kidsCountInput.addEventListener(
+    "change",
+    calculateTotalFee,
   );
-
-  kidsCountInput.addEventListener("input", () => {
-    if (!kidsAddonInput.checked) {
-      kidsCountInput.value = "";
-      calculateTotalFee();
-      return;
-    }
-
-    if (kidsCountInput.value !== "") {
-      const value = Number.parseInt(
-        kidsCountInput.value,
-        MAX_ADDITIONALS,
-      );
-
-      if (!Number.isInteger(value) || value < 1) {
-        kidsCountInput.value = "1";
-      }
-      else{
-        kidsCountInput.value = MAX_ADDITIONALS
-      }
-    }
-
-    calculateTotalFee();
-  });
-
-  kidsCountInput.addEventListener("blur", () => {
-    if (
-      kidsAddonInput.checked &&
-      kidsCountInput.value === ""
-    ) {
-      kidsCountInput.value = "1";
-    }
-
-    calculateTotalFee();
-  });
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -1124,8 +1032,7 @@ document.addEventListener("DOMContentLoaded", () => {
         registrationId,
         fullName: fullNameInput.value.trim(),
         category: categoryInput.value,
-        registrationType:
-          registrationTypeInput.value,
+        registrationType: REGISTRATION_TYPE,
         shirtSize: shirtSizeInput.value,
         kidsAddon:
           categoryInput.value === "Adult" &&
@@ -1182,7 +1089,7 @@ document.addEventListener("DOMContentLoaded", () => {
       additionalTruckCountField.hidden = true;
       additionalTruckCountInput.required = false;
 
-      updateRegistrationType();
+      updateRegistrationTypeBadge();
       updateCategoryFields();
     } catch (error) {
       console.error(
@@ -1199,6 +1106,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  updateRegistrationType();
+  registerAnotherButton.addEventListener("click", () => {
+    generatedReceiptSection.hidden = true;
+    generatedReceiptPreview.removeAttribute("src");
+    downloadReceiptButton.removeAttribute("href");
+    downloadReceiptButton.removeAttribute("download");
+
+    registrationFormCard.classList.remove("is-complete");
+
+    form.reset();
+    categoryInput.value = "Adult";
+
+    kidsAddonInput.checked = false;
+    kidsCountInput.value = "1";
+    kidsCountField.hidden = true;
+    kidsCountInput.required = false;
+
+    additionalTruckInput.checked = false;
+    additionalTruckCountInput.value = "1";
+    additionalTruckCountField.hidden = true;
+    additionalTruckCountInput.required = false;
+
+    clearReceiptPreview();
+    statusText.textContent = "";
+    statusText.className = "form-status";
+
+    updateRegistrationTypeBadge();
+    updateCategoryFields();
+    calculateTotalFee();
+
+    registrationFormCard.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+
+    fullNameInput.focus();
+  });
+
+  updateRegistrationTypeBadge();
   updateCategoryFields();
 });

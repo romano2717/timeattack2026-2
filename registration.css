@@ -306,8 +306,8 @@
 
 
 .generated-receipt-section {
-  width: min(760px, calc(100% - 28px));
-  margin: 0 auto 90px;
+  width: 100%;
+  margin: 0;
 }
 
 .generated-receipt-card {
@@ -366,5 +366,140 @@
 @media (max-width: 560px) {
   .generated-receipt-actions .button {
     width: 100%;
+  }
+}
+
+
+.registration-form-card {
+  position: relative;
+  padding-top: clamp(88px, 11vw, 118px);
+}
+
+.registration-type-badge {
+  position: absolute;
+  top: 24px;
+  right: clamp(20px, 4vw, 38px);
+  z-index: 2;
+  min-width: 150px;
+  padding: 13px 18px 12px;
+  text-align: center;
+  color: #24140b;
+  background:
+    radial-gradient(circle at 12% 18%, rgba(42, 26, 16, .22) 0 3px, transparent 4px),
+    radial-gradient(circle at 88% 74%, rgba(42, 26, 16, .18) 0 4px, transparent 5px),
+    linear-gradient(145deg, #ffb05f, #ef6c22);
+  border: 2px solid #6f2c0b;
+  border-radius: 10px 4px 12px 5px;
+  box-shadow:
+    0 10px 20px rgba(42, 26, 16, .22),
+    inset 0 0 0 2px rgba(255, 248, 232, .28);
+  transform: rotate(-5deg);
+}
+
+.registration-type-badge::before,
+.registration-type-badge::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background: #fffaf0;
+  border: 2px solid #6f2c0b;
+  border-radius: 50%;
+}
+
+.registration-type-badge::before {
+  top: 7px;
+  left: 7px;
+}
+
+.registration-type-badge::after {
+  right: 7px;
+  bottom: 7px;
+}
+
+.registration-type-badge span,
+.registration-type-badge strong {
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.registration-type-badge span {
+  font-family: "Anton", sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: .08em;
+  line-height: 1;
+}
+
+.registration-type-badge strong {
+  margin-top: 6px;
+  font-size: .78rem;
+  letter-spacing: .08em;
+}
+
+#shareReceiptButton {
+  display: none !important;
+}
+
+@media (max-width: 560px) {
+  .registration-form-card {
+    padding-top: 108px;
+  }
+
+  .registration-type-badge {
+    top: 20px;
+    right: 18px;
+    min-width: 138px;
+  }
+}
+
+
+.registration-form-card.is-complete {
+  display: none;
+}
+
+.register-another-button {
+  color: var(--mud-dark);
+  cursor: pointer;
+  background: transparent;
+  border-color: rgba(42, 26, 16, 0.35);
+}
+
+.register-another-button:hover {
+  color: var(--orange);
+  border-color: var(--orange);
+}
+
+.generated-receipt-section {
+  scroll-margin-top: 24px;
+}
+
+
+@media (min-width: 851px) {
+  .generated-receipt-section {
+    width: auto;
+    margin: 0;
+    align-self: start;
+  }
+
+  .generated-receipt-card {
+    width: 100%;
+    min-height: 100%;
+  }
+}
+
+.generated-receipt-section {
+  grid-column: 2;
+}
+
+.registration-layout > .generated-receipt-section {
+  width: 100%;
+}
+
+@media (max-width: 850px) {
+  .generated-receipt-section {
+    grid-column: 1;
+    width: 100%;
+    margin: 0;
   }
 }

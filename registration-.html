@@ -15,7 +15,7 @@
   />
 
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="registration.css?v=16" />
+  <link rel="stylesheet" href="registration.css?v=19" />
 </head>
 
 <body class="registration-page">
@@ -111,7 +111,15 @@
         </p>
       </section>
 
-      <section class="registration-form-card">
+      <section class="registration-form-card" id="registrationFormCard">
+        <div
+          id="registrationTypeBadge"
+          class="registration-type-badge"
+          aria-label="Current registration phase"
+        >
+          <span id="registrationTypeBadgeLabel">EARLY</span>
+          <strong id="registrationTypeBadgeFee">₱400 ENTRY</strong>
+        </div>
         <h2>Participant Information</h2>
 
         <div class="registration-notice">
@@ -145,21 +153,7 @@
               <option value="Kid">Kid</option>
             </select>
           </div>
-
-          <div class="form-field">
-            <label for="registrationType">Registration Type</label>
-            <input
-              id="registrationType"
-              name="registrationType"
-              type="text"
-              value=""
-              readonly
-              aria-readonly="true"
-              tabindex="-1"
-            />
-          </div>
-
-          <div class="form-field">
+<div class="form-field">
             <label for="shirtSize">T-shirt Size</label>
             <select id="shirtSize" name="shirtSize" required>
               <option value="">Select size</option>
@@ -196,17 +190,11 @@
 
             <div class="addon-number-fields">
               <div class="form-field" id="kids-count-field" hidden>
-                <label for="kidsCount">Number of Kids(max 2)</label>
-                <input
-                  id="kidsCount"
-                  name="kidsCount"
-                  type="number"
-                  min="1"
-                  max="2"
-                  step="1"
-                  value=""
-                  maxlength="1"
-                />
+                <label for="kidsCount">Number of Kids</label>
+                <select id="kidsCount" name="kidsCount">
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                </select>
               </div>
 
               <div
@@ -215,18 +203,15 @@
                 hidden
               >
                 <label for="additionalTruckCount">
-                  Number of Additional Trucks(max 2)
+                  Number of Additional Trucks
                 </label>
-                <input
+                <select
                   id="additionalTruckCount"
                   name="additionalTruckCount"
-                  type="number"
-                  min="1"
-                  max="2"
-                  step="1"
-                  value=""
-                  maxlength="1"
-                />
+                >
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                </select>
               </div>
             </div>
           </div>
@@ -306,7 +291,6 @@
           ></p>
         </form>
       </section>
-    </div>
 
     <section
       id="generatedReceiptSection"
@@ -336,19 +320,20 @@
           </a>
 
           <button
-            id="shareReceiptButton"
-            class="button receipt-share-button"
+            id="registerAnotherButton"
+            class="button register-another-button"
             type="button"
-            hidden
           >
-            Share Receipt
+            Register Another Participant
           </button>
-        </div>
+</div>
       </div>
     </section>
 
-  </main>
+  
+    </div>
+</main>
 
-  <script src="registration.js?v=16"></script>
+  <script src="registration.js?v=18"></script>
 </body>
 </html>
