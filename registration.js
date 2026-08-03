@@ -901,7 +901,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
 
       if (navigator.canShare({ files: [receiptFile] })) {
-        shareReceiptButton.hidden = false;
+        shareReceiptButton.hidden = true;
         shareReceiptButton.onclick = async () => {
           try {
             await navigator.share({
