@@ -1001,8 +1001,6 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       downloadReceiptButton.href = objectUrl;
       downloadReceiptButton.download = fileName;
-      downloadReceiptButton.removeAttribute("target");
-      downloadReceiptButton.onclick = null;
     }
 
     registrationFormCard.classList.add("is-complete");
