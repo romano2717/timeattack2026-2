@@ -906,19 +906,97 @@ document.addEventListener("DOMContentLoaded", () => {
     generatedReceiptSection.hidden = false;
 
     if (isIOSDevice()) {
-      downloadReceiptButton.href = objectUrl;
-      downloadReceiptButton.target = "_blank";
-      downloadReceiptButton.removeAttribute("download");
+      downloadReceiptButton.onclick = (event) => {
+        event.preventDefault();
 
-      downloadReceiptButton.onclick = () => {
-        setTimeout(() => {
-          alert(
-            "How to save your receipt:\n\n" +
-            "1. Press and hold the image.\n" +
-            "2. Tap 'Save to Photos'.\n\n" +
-            "Your receipt will then be available in your Photos app."
-          );
-        }, 500);
+        const receiptWindow = window.open("", "_blank");
+
+        if (!receiptWindow) {
+          return;
+        }
+
+        receiptWindow.document.write(`
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta
+              name="viewport"
+              content="width=device-width, initial-scale=1"
+            >
+            <title>MUDFEST Receipt</title>
+
+            <style>
+              body{
+                margin:0;
+                padding:24px;
+                background:#111;
+                color:white;
+                font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+                text-align:center;
+              }
+
+              .card{
+                max-width:700px;
+                margin:auto;
+              }
+
+              h2{
+                color:#ef6c22;
+                margin-bottom:8px;
+              }
+
+              p{
+                line-height:1.6;
+                color:#ddd;
+              }
+
+              img{
+                width:100%;
+                max-width:650px;
+                margin-top:24px;
+                border-radius:12px;
+                box-shadow:0 10px 30px rgba(0,0,0,.5);
+              }
+
+              .tip{
+                margin-top:18px;
+                padding:16px;
+                border-radius:10px;
+                background:#ef6c22;
+                color:#111;
+                font-weight:bold;
+              }
+            </style>
+          </head>
+
+          <body>
+
+            <div class="card">
+
+              <h2>MUDFEST Registration Receipt</h2>
+
+              <p>
+                <strong>iPhone / iPad:</strong><br>
+                Press and hold the receipt image below,
+                then tap <strong>"Save to Photos"</strong>.
+              </p>
+
+              <img
+                src="${objectUrl}"
+                alt="MUDFEST Receipt"
+              >
+
+              <div class="tip">
+                Your receipt will be saved to the Photos app.
+              </div>
+
+            </div>
+
+          </body>
+          </html>
+        `);
+
+        receiptWindow.document.close();
       };
     } else {
       downloadReceiptButton.href = objectUrl;
