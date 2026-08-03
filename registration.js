@@ -985,13 +985,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 src="${objectUrl}"
                 alt="MUDFEST Receipt"
               >
-
-              <div class="tip">
-                Your receipt will be saved to the Photos app.
-              </div>
-
+              <p>
+                <strong>iPhone / iPad:</strong><br>
+                Press and hold the receipt image below,
+                then tap <strong>"Save to Photos"</strong>.
+              </p>
             </div>
-
           </body>
           </html>
         `);
