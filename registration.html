@@ -15,7 +15,7 @@
   />
 
   <link rel="stylesheet" href="styles.css" />
-  <link rel="stylesheet" href="registration.css?v=12" />
+  <link rel="stylesheet" href="registration.css?v=16" />
 </head>
 
 <body class="registration-page">
@@ -196,15 +196,16 @@
 
             <div class="addon-number-fields">
               <div class="form-field" id="kids-count-field" hidden>
-                <label for="kidsCount">Number of Kids</label>
+                <label for="kidsCount">Number of Kids(max 2)</label>
                 <input
                   id="kidsCount"
                   name="kidsCount"
                   type="number"
                   min="1"
-                  max="10"
+                  max="2"
                   step="1"
                   value=""
+                  maxlength="1"
                 />
               </div>
 
@@ -214,16 +215,17 @@
                 hidden
               >
                 <label for="additionalTruckCount">
-                  Number of Additional Trucks
+                  Number of Additional Trucks(max 2)
                 </label>
                 <input
                   id="additionalTruckCount"
                   name="additionalTruckCount"
                   type="number"
                   min="1"
-                  max="10"
+                  max="2"
                   step="1"
                   value=""
+                  maxlength="1"
                 />
               </div>
             </div>
@@ -305,8 +307,48 @@
         </form>
       </section>
     </div>
+
+    <section
+      id="generatedReceiptSection"
+      class="generated-receipt-section"
+      aria-live="polite"
+      hidden
+    >
+      <div class="generated-receipt-card">
+        <p class="eyebrow">REGISTRATION COMPLETE</p>
+        <h2>Your MUDFEST Receipt</h2>
+        <p>Save this receipt and present it during event check-in.</p>
+
+        <img
+          id="generatedReceiptPreview"
+          class="generated-receipt-preview"
+          alt="Generated MUDFEST registration receipt"
+        />
+
+        <div class="generated-receipt-actions">
+          <a
+            id="downloadReceiptButton"
+            class="button button-primary"
+            href="#"
+            download
+          >
+            Download Receipt
+          </a>
+
+          <button
+            id="shareReceiptButton"
+            class="button receipt-share-button"
+            type="button"
+            hidden
+          >
+            Share Receipt
+          </button>
+        </div>
+      </div>
+    </section>
+
   </main>
 
-  <script src="registration.js?v=14"></script>
+  <script src="registration.js?v=16"></script>
 </body>
 </html>

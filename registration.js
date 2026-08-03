@@ -10,6 +10,7 @@ const ADDITIONAL_TRUCK_PRICE = 200;
 const MAX_RECEIPT_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_RECEIPT_DIMENSION = 1600;
 const RECEIPT_JPEG_QUALITY = 0.82;
+const MAX_ADDITIONALS = 2;
 
 const REGISTRATION_FEES = {
   Adult: {
@@ -62,6 +63,14 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("totalFeeDisplay");
   const statusText = document.getElementById("form-status");
   const submitButton = document.getElementById("submit-button");
+  const generatedReceiptSection =
+    document.getElementById("generatedReceiptSection");
+  const generatedReceiptPreview =
+    document.getElementById("generatedReceiptPreview");
+  const downloadReceiptButton =
+    document.getElementById("downloadReceiptButton");
+  const shareReceiptButton =
+    document.getElementById("shareReceiptButton");
 
   if (
     !form ||
@@ -86,7 +95,11 @@ document.addEventListener("DOMContentLoaded", () => {
     !additionalTruckFeeDisplay ||
     !totalFeeDisplay ||
     !statusText ||
-    !submitButton
+    !submitButton ||
+    !generatedReceiptSection ||
+    !generatedReceiptPreview ||
+    !downloadReceiptButton ||
+    !shareReceiptButton
   ) {
     console.error(
       "One or more registration form elements are missing.",
@@ -368,15 +381,558 @@ document.addEventListener("DOMContentLoaded", () => {
 
     context.drawImage(image, 0, 0, width, height);
 
+    const dataUrl = canvas.toDataURL(
+      "image/jpeg",
+      RECEIPT_JPEG_QUALITY,
+    );
+
     return {
-      base64: canvas
-        .toDataURL(
-          "image/jpeg",
-          RECEIPT_JPEG_QUALITY,
-        )
-        .split(",")[1],
+      dataUrl,
+      base64: dataUrl.split(",")[1],
       mimeType: "image/jpeg",
     };
+  }
+
+
+  function loadCanvasImage(source) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => resolve(image);
+      image.onerror = () =>
+        reject(new Error("Unable to load receipt image."));
+      image.src = source;
+    });
+  }
+
+  function canvasToBlob(canvas) {
+    return new Promise((resolve, reject) => {
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(
+              new Error(
+                "Unable to create the downloadable receipt.",
+              ),
+            );
+          }
+        },
+        "image/png",
+        1,
+      );
+    });
+  }
+
+  function drawRoundedRect(
+    context,
+    x,
+    y,
+    width,
+    height,
+    radius,
+    fillStyle,
+    strokeStyle = null,
+  ) {
+    context.beginPath();
+    context.roundRect(x, y, width, height, radius);
+    context.fillStyle = fillStyle;
+    context.fill();
+
+    if (strokeStyle) {
+      context.strokeStyle = strokeStyle;
+      context.lineWidth = 2;
+      context.stroke();
+    }
+  }
+
+  function drawLabelValue(
+    context,
+    label,
+    value,
+    x,
+    y,
+    width,
+  ) {
+    context.fillStyle = "#a84a13";
+    context.font = '700 24px Arial, sans-serif';
+    context.fillText(label.toUpperCase(), x, y);
+
+    context.fillStyle = "#21170f";
+    context.font = '700 30px Arial, sans-serif';
+
+    const text = String(value || "—");
+    const words = text.split(/\s+/);
+    let line = "";
+    let currentY = y + 40;
+
+    words.forEach((word, index) => {
+      const testLine = line ? `${line} ${word}` : word;
+
+      if (
+        context.measureText(testLine).width > width &&
+        line
+      ) {
+        context.fillText(line, x, currentY);
+        line = word;
+        currentY += 34;
+      } else {
+        line = testLine;
+      }
+
+      if (index === words.length - 1 && line) {
+        context.fillText(line, x, currentY);
+      }
+    });
+
+    context.strokeStyle = "rgba(42,26,16,.14)";
+    context.beginPath();
+    context.moveTo(x, y + 92);
+    context.lineTo(x + width, y + 92);
+    context.stroke();
+  }
+
+  async function generatePremiumReceipt(
+    submission,
+    paymentReceiptDataUrl,
+  ) {
+    const canvas = document.createElement("canvas");
+    canvas.width = 1080;
+    canvas.height = 2100;
+
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+      throw new Error(
+        "Your browser cannot generate the receipt image.",
+      );
+    }
+
+    const orange = "#ef6c22";
+    const orangeDark = "#b4470b";
+    const ink = "#15110d";
+    const mudDark = "#2a1a10";
+    const cream = "#fff8e8";
+
+    context.fillStyle = ink;
+    context.fillRect(0, 0, canvas.width, canvas.height);
+
+    const headerGradient = context.createLinearGradient(
+      0,
+      0,
+      canvas.width,
+      0,
+    );
+    headerGradient.addColorStop(0, "#130f0b");
+    headerGradient.addColorStop(0.55, "#26170d");
+    headerGradient.addColorStop(1, "#130f0b");
+    context.fillStyle = headerGradient;
+    context.fillRect(0, 0, canvas.width, 255);
+
+    context.globalAlpha = 0.25;
+    for (let index = 0; index < 90; index += 1) {
+      const radius = 3 + Math.random() * 22;
+      const x =
+        index < 45
+          ? Math.random() * 220
+          : 860 + Math.random() * 220;
+      const y = Math.random() * 300;
+
+      context.beginPath();
+      context.arc(x, y, radius, 0, Math.PI * 2);
+      context.fillStyle = orange;
+      context.fill();
+    }
+    context.globalAlpha = 1;
+
+    context.save();
+    context.translate(58, 55);
+    context.rotate(-0.06);
+    context.strokeStyle = orange;
+    context.lineWidth = 8;
+    context.strokeRect(0, 0, 125, 125);
+    context.fillStyle = orange;
+    context.font = '700 68px Arial Black, Arial';
+    context.fillText("MF", 14, 88);
+    context.restore();
+
+    context.fillStyle = cream;
+    context.font = '700 76px Arial Black, Arial';
+    context.fillText("MUDFEST", 220, 115);
+
+    context.fillStyle = orange;
+    context.font = '700 76px Arial Black, Arial';
+    context.fillText("RECEIPT", 620, 115);
+
+    context.fillStyle = "#d2c3ad";
+    context.font = '600 24px Arial, sans-serif';
+    context.fillText("SOUTHSIDE CEBU RC", 224, 158);
+
+    context.fillStyle = orange;
+    context.font = '700 26px Arial, sans-serif';
+    context.fillText(
+      "OFFICIAL REGISTRATION COPY",
+      619,
+      158,
+    );
+
+    drawRoundedRect(
+      context,
+      30,
+      225,
+      1020,
+      1745,
+      8,
+      cream,
+      "#5b2d16",
+    );
+
+    // Registration ID and timestamp stacked vertically.
+    drawRoundedRect(
+      context,
+      60,
+      265,
+      960,
+      175,
+      14,
+      mudDark,
+    );
+
+    context.fillStyle = orange;
+    context.font = '700 24px Arial, sans-serif';
+    context.fillText("REGISTRATION ID", 90, 310);
+
+    context.fillStyle = cream;
+    context.font = '700 39px Arial, sans-serif';
+    context.fillText(
+      submission.registrationId,
+      90,
+      360,
+    );
+
+    const submittedDate = new Date(
+      submission.submittedAt,
+    );
+
+    context.fillStyle = "#d8c8b2";
+    context.font = '600 24px Arial, sans-serif';
+    context.fillText(
+      submittedDate.toLocaleString("en-PH", {
+        dateStyle: "medium",
+        timeStyle: "short",
+      }),
+      90,
+      408,
+    );
+
+    context.fillStyle = orangeDark;
+    context.font = '700 34px Arial Black, Arial';
+    context.fillText(
+      "REGISTRATION DETAILS",
+      70,
+      500,
+    );
+
+    drawRoundedRect(
+      context,
+      60,
+      530,
+      960,
+      500,
+      12,
+      "#fffdf7",
+      "rgba(42,26,16,.18)",
+    );
+
+    const leftX = 88;
+    const rightX = 555;
+    const detailWidth = 390;
+
+    drawLabelValue(
+      context,
+      "Full Name",
+      submission.fullName,
+      leftX,
+      585,
+      detailWidth,
+    );
+    drawLabelValue(
+      context,
+      "Category",
+      submission.category,
+      leftX,
+      700,
+      detailWidth,
+    );
+    drawLabelValue(
+      context,
+      "Registration Type",
+      submission.registrationType,
+      leftX,
+      815,
+      detailWidth,
+    );
+    drawLabelValue(
+      context,
+      "T-shirt Size",
+      submission.shirtSize,
+      leftX,
+      930,
+      detailWidth,
+    );
+
+    drawLabelValue(
+      context,
+      "Kids Add-on",
+      submission.kidsAddon === "Yes"
+        ? `Yes — ${submission.kidsCount} kid(s)`
+        : "No",
+      rightX,
+      585,
+      detailWidth,
+    );
+    drawLabelValue(
+      context,
+      "Additional Truck",
+      submission.additionalTruck === "Yes"
+        ? `Yes — ${submission.additionalTruckCount} truck(s)`
+        : "No",
+      rightX,
+      700,
+      detailWidth,
+    );
+    drawLabelValue(
+      context,
+      "Event Date",
+      "September 19, 2026 — 9:00 AM",
+      rightX,
+      815,
+      detailWidth,
+    );
+    drawLabelValue(
+      context,
+      "Venue",
+      "Southern Hills, Minglanilla, Cebu",
+      rightX,
+      930,
+      detailWidth,
+    );
+
+    context.fillStyle = orangeDark;
+    context.font = '700 34px Arial Black, Arial';
+    context.fillText("FEE BREAKDOWN", 70, 1090);
+
+    drawRoundedRect(
+      context,
+      60,
+      1120,
+      960,
+      305,
+      12,
+      "#f4ead8",
+      "rgba(42,26,16,.18)",
+    );
+
+    const baseFee =
+      REGISTRATION_FEES[submission.category]?.[
+        submission.registrationType
+      ] ?? 0;
+
+    const kidsFee =
+      Number(submission.kidsCount || 0) *
+      KIDS_ADDON_PRICE;
+
+    const truckFee =
+      Number(submission.additionalTruckCount || 0) *
+      ADDITIONAL_TRUCK_PRICE;
+
+    const rows = [
+      [
+        `Base Fee (${submission.category} — ${submission.registrationType})`,
+        baseFee,
+      ],
+      [
+        `Kids Add-on (${submission.kidsCount || 0} × ₱${KIDS_ADDON_PRICE})`,
+        kidsFee,
+      ],
+      [
+        `Additional Truck (${submission.additionalTruckCount || 0} × ₱${ADDITIONAL_TRUCK_PRICE})`,
+        truckFee,
+      ],
+    ];
+
+    context.font = '600 28px Arial, sans-serif';
+
+    rows.forEach(([label, amount], index) => {
+      const rowY = 1180 + index * 65;
+      context.fillStyle = mudDark;
+      context.textAlign = "left";
+      context.fillText(label, 90, rowY);
+      context.textAlign = "right";
+      context.fillText(
+        formatPeso(Number(amount)),
+        980,
+        rowY,
+      );
+    });
+
+    context.strokeStyle = "rgba(42,26,16,.26)";
+    context.beginPath();
+    context.moveTo(90, 1370);
+    context.lineTo(980, 1370);
+    context.stroke();
+
+    context.fillStyle = orangeDark;
+    context.font = '700 34px Arial Black, Arial';
+    context.textAlign = "left";
+    context.fillText("TOTAL FEE", 90, 1410);
+    context.textAlign = "right";
+    context.fillText(
+      formatPeso(Number(submission.totalFee || 0)),
+      980,
+      1410,
+    );
+    context.textAlign = "left";
+
+    context.fillStyle = orangeDark;
+    context.font = '700 34px Arial Black, Arial';
+    context.fillText(
+      "PAYMENT RECEIPT SCREENSHOT",
+      70,
+      1490,
+    );
+
+    // Larger screenshot area for readability.
+    drawRoundedRect(
+      context,
+      60,
+      1520,
+      960,
+      360,
+      12,
+      "#ede5d7",
+      "rgba(42,26,16,.18)",
+    );
+
+    const paymentImage =
+      await loadCanvasImage(paymentReceiptDataUrl);
+
+    const imageMaxWidth = 900;
+    const imageMaxHeight = 330;
+    const imageScale = Math.min(
+      imageMaxWidth / paymentImage.width,
+      imageMaxHeight / paymentImage.height,
+    );
+
+    const imageWidth = paymentImage.width * imageScale;
+    const imageHeight = paymentImage.height * imageScale;
+    const imageX = 60 + (960 - imageWidth) / 2;
+    const imageY = 1520 + (360 - imageHeight) / 2;
+
+    context.drawImage(
+      paymentImage,
+      imageX,
+      imageY,
+      imageWidth,
+      imageHeight,
+    );
+
+    const footerGradient = context.createLinearGradient(
+      0,
+      1970,
+      canvas.width,
+      2100,
+    );
+    footerGradient.addColorStop(0, "#c94d08");
+    footerGradient.addColorStop(1, "#ef6c22");
+
+    context.fillStyle = footerGradient;
+    context.fillRect(0, 1970, 1080, 130);
+
+    context.fillStyle = "#1b1008";
+    context.font = '700 32px Arial Black, Arial';
+    context.textAlign = "center";
+    context.fillText(
+      "THANK YOU FOR BEING PART OF MUDFEST!",
+      540,
+      2025,
+    );
+
+    context.font = '600 21px Arial, sans-serif';
+    context.fillText(
+      "Keep this receipt and present it during event check-in.",
+      540,
+      2065,
+    );
+
+    context.textAlign = "left";
+    return canvas;
+  }
+
+  async function prepareDownloadableReceipt(
+    submission,
+    paymentReceiptDataUrl,
+  ) {
+    const canvas = await generatePremiumReceipt(
+      submission,
+      paymentReceiptDataUrl,
+    );
+
+    const blob = await canvasToBlob(canvas);
+    const fileName =
+      `${submission.registrationId}-MUDFEST-RECEIPT.png`;
+    const objectUrl = URL.createObjectURL(blob);
+
+    generatedReceiptPreview.src = objectUrl;
+    generatedReceiptSection.hidden = false;
+
+    downloadReceiptButton.href = objectUrl;
+    downloadReceiptButton.download = fileName;
+
+    if (
+      navigator.share &&
+      navigator.canShare &&
+      typeof File !== "undefined"
+    ) {
+      const receiptFile = new File(
+        [blob],
+        fileName,
+        { type: "image/png" },
+      );
+
+      if (navigator.canShare({ files: [receiptFile] })) {
+        shareReceiptButton.hidden = false;
+        shareReceiptButton.onclick = async () => {
+          try {
+            await navigator.share({
+              title: "MUDFEST Registration Receipt",
+              text: submission.registrationId,
+              files: [receiptFile],
+            });
+          } catch (error) {
+            if (error?.name !== "AbortError") {
+              console.error(
+                "Unable to share receipt:",
+                error,
+              );
+            }
+          }
+        };
+      }
+    }
+
+    const autoDownload = document.createElement("a");
+    autoDownload.href = objectUrl;
+    autoDownload.download = fileName;
+    autoDownload.style.display = "none";
+    document.body.appendChild(autoDownload);
+    autoDownload.click();
+    autoDownload.remove();
+
+    generatedReceiptSection.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
   }
 
   function postToAppsScript(data) {
@@ -487,8 +1043,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!Number.isInteger(value) || value < 1) {
           additionalTruckCountInput.value = "1";
-        } else if (value > 10) {
-          additionalTruckCountInput.value = "10";
+        } else if (value > MAX_ADDITIONALS) {
+          additionalTruckCountInput.value = MAX_ADDITIONALS;
         }
       }
 
@@ -520,11 +1076,14 @@ document.addEventListener("DOMContentLoaded", () => {
     if (kidsCountInput.value !== "") {
       const value = Number.parseInt(
         kidsCountInput.value,
-        10,
+        MAX_ADDITIONALS,
       );
 
       if (!Number.isInteger(value) || value < 1) {
         kidsCountInput.value = "1";
+      }
+      else{
+        kidsCountInput.value = MAX_ADDITIONALS
       }
     }
 
@@ -599,8 +1158,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       statusText.textContent =
         `Registration ${registrationId} was submitted. ` +
-        "Your receipt will be verified by the organizers.";
+        "Generating your downloadable receipt...";
       statusText.className = "form-status success";
+
+      await prepareDownloadableReceipt(
+        submission,
+        receipt.dataUrl,
+      );
+
+      statusText.textContent =
+        `Registration ${registrationId} was submitted. ` +
+        "Your receipt is ready to download.";
 
       form.reset();
       clearReceiptPreview();
