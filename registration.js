@@ -880,6 +880,14 @@ document.addEventListener("DOMContentLoaded", () => {
     return canvas;
   }
 
+  function isIOSDevice() {
+    return (
+      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+      (navigator.platform === "MacIntel" &&
+        navigator.maxTouchPoints > 1)
+    );
+  }
+
   async function prepareDownloadableReceipt(
     submission,
     paymentReceiptDataUrl,
@@ -897,8 +905,27 @@ document.addEventListener("DOMContentLoaded", () => {
     generatedReceiptPreview.src = objectUrl;
     generatedReceiptSection.hidden = false;
 
-    downloadReceiptButton.href = objectUrl;
-    downloadReceiptButton.download = fileName;
+    if (isIOSDevice()) {
+      downloadReceiptButton.href = objectUrl;
+      downloadReceiptButton.target = "_blank";
+      downloadReceiptButton.removeAttribute("download");
+
+      downloadReceiptButton.onclick = () => {
+        setTimeout(() => {
+          alert(
+            "How to save your receipt:\n\n" +
+            "1. Press and hold the image.\n" +
+            "2. Tap 'Save to Photos'.\n\n" +
+            "Your receipt will then be available in your Photos app."
+          );
+        }, 500);
+      };
+    } else {
+      downloadReceiptButton.href = objectUrl;
+      downloadReceiptButton.download = fileName;
+      downloadReceiptButton.removeAttribute("target");
+      downloadReceiptButton.onclick = null;
+    }
 
     registrationFormCard.classList.add("is-complete");
 
