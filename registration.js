@@ -24,8 +24,21 @@ const REGISTRATION_FEES = {
   },
 };
 
+function isFacebookInAppBrowser() {
+  const userAgent =
+    navigator.userAgent || navigator.vendor || "";
+
+  return /FBAN|FBAV|FB_IAB|Messenger|Instagram/i.test(
+    userAgent,
+  );
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registration-form");
+  const inAppBrowserOverlay =
+    document.getElementById("inAppBrowserOverlay");
+  const continueAnyway =
+    document.getElementById("continueAnyway");
   const registrationFormCard =
     document.getElementById("registrationFormCard");
   const categoryInput = document.getElementById("category");
@@ -79,6 +92,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (
     !form ||
+    !inAppBrowserOverlay ||
+    !continueAnyway ||
     !registrationFormCard ||
     !categoryInput ||
     !fullNameInput ||
@@ -880,14 +895,6 @@ document.addEventListener("DOMContentLoaded", () => {
     return canvas;
   }
 
-  function isIOSDevice() {
-    return (
-      /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-      (navigator.platform === "MacIntel" &&
-        navigator.maxTouchPoints > 1)
-    );
-  }
-
   async function prepareDownloadableReceipt(
     submission,
     paymentReceiptDataUrl,
@@ -905,102 +912,8 @@ document.addEventListener("DOMContentLoaded", () => {
     generatedReceiptPreview.src = objectUrl;
     generatedReceiptSection.hidden = false;
 
-    if (isIOSDevice()) {
-      downloadReceiptButton.onclick = (event) => {
-        event.preventDefault();
-
-        const receiptWindow = window.open("", "_blank");
-
-        if (!receiptWindow) {
-          return;
-        }
-
-        receiptWindow.document.write(`
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta
-              name="viewport"
-              content="width=device-width, initial-scale=1"
-            >
-            <title>MUDFEST Receipt</title>
-
-            <style>
-              body{
-                margin:0;
-                padding:24px;
-                background:#111;
-                color:white;
-                font-family:-apple-system,BlinkMacSystemFont,sans-serif;
-                text-align:center;
-              }
-
-              .card{
-                max-width:700px;
-                margin:auto;
-              }
-
-              h2{
-                color:#ef6c22;
-                margin-bottom:8px;
-              }
-
-              p{
-                line-height:1.6;
-                color:#ddd;
-              }
-
-              img{
-                width:100%;
-                max-width:650px;
-                margin-top:24px;
-                border-radius:12px;
-                box-shadow:0 10px 30px rgba(0,0,0,.5);
-              }
-
-              .tip{
-                margin-top:18px;
-                padding:16px;
-                border-radius:10px;
-                background:#ef6c22;
-                color:#111;
-                font-weight:bold;
-              }
-            </style>
-          </head>
-
-          <body>
-
-            <div class="card">
-
-              <h2>MUDFEST Registration Receipt</h2>
-
-              <p>
-                <strong>iPhone / iPad:</strong><br>
-                Press and hold the receipt image below,
-                then tap <strong>"Save to Photos"</strong>.
-              </p>
-
-              <img
-                src="${objectUrl}"
-                alt="MUDFEST Receipt"
-              >
-              <p>
-                <strong>iPhone / iPad:</strong><br>
-                Press and hold the receipt image below,
-                then tap <strong>"Save to Photos"</strong>.
-              </p>
-            </div>
-          </body>
-          </html>
-        `);
-
-        receiptWindow.document.close();
-      };
-    } else {
-      downloadReceiptButton.href = objectUrl;
-      downloadReceiptButton.download = fileName;
-    }
+    downloadReceiptButton.href = objectUrl;
+    downloadReceiptButton.download = fileName;
 
     registrationFormCard.classList.add("is-complete");
 
@@ -1242,6 +1155,18 @@ document.addEventListener("DOMContentLoaded", () => {
       block: "start",
     });
 
+    fullNameInput.focus();
+  });
+
+  if (isFacebookInAppBrowser()) {
+    inAppBrowserOverlay.hidden = false;
+    document.body.classList.add("modal-open");
+    continueAnyway.focus();
+  }
+
+  continueAnyway.addEventListener("click", () => {
+    inAppBrowserOverlay.hidden = true;
+    document.body.classList.remove("modal-open");
     fullNameInput.focus();
   });
 

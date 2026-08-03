@@ -503,3 +503,86 @@
     margin: 0;
   }
 }
+
+
+.browser-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(13, 10, 7, 0.88);
+  backdrop-filter: blur(8px);
+}
+
+.browser-card {
+  width: min(100%, 540px);
+  max-height: calc(100svh - 48px);
+  overflow-y: auto;
+  padding: clamp(24px, 5vw, 38px);
+  text-align: center;
+  color: var(--ink);
+  background: #fffaf0;
+  border: 1px solid rgba(239, 108, 34, 0.45);
+  border-top: 5px solid var(--orange);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.45);
+}
+
+.browser-warning-icon {
+  margin: 0 0 8px;
+  color: var(--orange);
+  font-size: 3rem;
+  line-height: 1;
+}
+
+.browser-card h2 {
+  margin: 0 0 16px;
+  color: var(--mud-dark);
+  font-family: "Anton", sans-serif;
+  font-size: clamp(2rem, 7vw, 3.3rem);
+  font-weight: 400;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.browser-card > p:not(.browser-warning-icon) {
+  margin: 10px 0;
+  color: rgba(42, 26, 16, 0.76);
+}
+
+.browser-instructions {
+  display: grid;
+  gap: 14px;
+  margin: 24px 0;
+  text-align: left;
+}
+
+.browser-instructions section {
+  padding: 16px;
+  background: #f4ead8;
+  border-left: 4px solid var(--orange);
+}
+
+.browser-instructions h3 {
+  margin: 0 0 8px;
+  color: var(--mud-dark);
+  font-family: "Anton", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.browser-instructions ol {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.browser-instructions li + li {
+  margin-top: 6px;
+}
+
+.browser-continue {
+  width: 100%;
+  cursor: pointer;
+}
