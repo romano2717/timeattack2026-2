@@ -24,21 +24,8 @@ const REGISTRATION_FEES = {
   },
 };
 
-function isFacebookInAppBrowser() {
-  const userAgent =
-    navigator.userAgent || navigator.vendor || "";
-  
-  return /FBAN|FBAV|FB_IAB|Messenger|Instagram/i.test(
-    userAgent,
-  );
-}
-
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registration-form");
-  const inAppBrowserOverlay =
-    document.getElementById("inAppBrowserOverlay");
-  const continueAnyway =
-    document.getElementById("continueAnyway");
   const registrationFormCard =
     document.getElementById("registrationFormCard");
   const categoryInput = document.getElementById("category");
@@ -85,15 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("generatedReceiptSection");
   const generatedReceiptPreview =
     document.getElementById("generatedReceiptPreview");
-  const downloadReceiptButton =
-    document.getElementById("downloadReceiptButton");
   const registerAnotherButton =
     document.getElementById("registerAnotherButton");
 
   if (
     !form ||
-    !inAppBrowserOverlay ||
-    !continueAnyway ||
     !registrationFormCard ||
     !categoryInput ||
     !fullNameInput ||
@@ -121,7 +104,6 @@ document.addEventListener("DOMContentLoaded", () => {
     !submitButton ||
     !generatedReceiptSection ||
     !generatedReceiptPreview ||
-    !downloadReceiptButton ||
     !registerAnotherButton
   ) {
     console.error(
@@ -524,7 +506,7 @@ document.addEventListener("DOMContentLoaded", () => {
   ) {
     const canvas = document.createElement("canvas");
     canvas.width = 1080;
-    canvas.height = 2100;
+    canvas.height = 2860;
 
     const context = canvas.getContext("2d");
 
@@ -607,7 +589,7 @@ document.addEventListener("DOMContentLoaded", () => {
       30,
       225,
       1020,
-      1745,
+      2505,
       8,
       cream,
       "#5b2d16",
@@ -825,26 +807,59 @@ document.addEventListener("DOMContentLoaded", () => {
     context.fillText(
       "PAYMENT RECEIPT SCREENSHOT",
       70,
-      1490,
+      1485,
     );
 
     // Larger screenshot area for readability.
     drawRoundedRect(
       context,
       60,
-      1520,
+      1515,
       960,
-      360,
+      1140,
       12,
       "#ede5d7",
       "rgba(42,26,16,.18)",
     );
 
+    // Phone-style frame for portrait payment screenshots.
+    drawRoundedRect(
+      context,
+      250,
+      1565,
+      580,
+      1040,
+      34,
+      "#111111",
+      "rgba(42,26,16,.38)",
+    );
+
+    drawRoundedRect(
+      context,
+      275,
+      1605,
+      530,
+      960,
+      22,
+      "#ffffff",
+    );
+
+    context.fillStyle = "#2b2b2b";
+    context.beginPath();
+    context.roundRect(
+      460,
+      1578,
+      160,
+      12,
+      6,
+    );
+    context.fill();
+
     const paymentImage =
       await loadCanvasImage(paymentReceiptDataUrl);
 
-    const imageMaxWidth = 900;
-    const imageMaxHeight = 330;
+    const imageMaxWidth = 500;
+    const imageMaxHeight = 920;
     const imageScale = Math.min(
       imageMaxWidth / paymentImage.width,
       imageMaxHeight / paymentImage.height,
@@ -852,8 +867,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const imageWidth = paymentImage.width * imageScale;
     const imageHeight = paymentImage.height * imageScale;
-    const imageX = 60 + (960 - imageWidth) / 2;
-    const imageY = 1520 + (360 - imageHeight) / 2;
+    const imageX = 275 + (530 - imageWidth) / 2;
+    const imageY = 1605 + (960 - imageHeight) / 2;
 
     context.drawImage(
       paymentImage,
@@ -865,15 +880,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const footerGradient = context.createLinearGradient(
       0,
-      1970,
+      2730,
       canvas.width,
-      2100,
+      2860,
     );
     footerGradient.addColorStop(0, "#c94d08");
     footerGradient.addColorStop(1, "#ef6c22");
 
     context.fillStyle = footerGradient;
-    context.fillRect(0, 1970, 1080, 130);
+    context.fillRect(0, 2730, 1080, 130);
 
     context.fillStyle = "#1b1008";
     context.font = '700 32px Arial Black, Arial';
@@ -881,21 +896,21 @@ document.addEventListener("DOMContentLoaded", () => {
     context.fillText(
       "THANK YOU FOR BEING PART OF MUDFEST!",
       540,
-      2025,
+      2785,
     );
 
     context.font = '600 21px Arial, sans-serif';
     context.fillText(
       "Keep this receipt and present it during event check-in.",
       540,
-      2065,
+      2825,
     );
 
     context.textAlign = "left";
     return canvas;
   }
 
-  async function prepareDownloadableReceipt(
+  async function prepareGeneratedReceipt(
     submission,
     paymentReceiptDataUrl,
   ) {
@@ -905,15 +920,10 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     const blob = await canvasToBlob(canvas);
-    const fileName =
-      `${submission.registrationId}-MUDFEST-RECEIPT.png`;
     const objectUrl = URL.createObjectURL(blob);
 
     generatedReceiptPreview.src = objectUrl;
     generatedReceiptSection.hidden = false;
-
-    downloadReceiptButton.href = objectUrl;
-    downloadReceiptButton.download = fileName;
 
     registrationFormCard.classList.add("is-complete");
 
@@ -1071,8 +1081,6 @@ document.addEventListener("DOMContentLoaded", () => {
             : "0",
         totalFee:
           totalFeeInput.dataset.amount || "0",
-        receiptMimeType: receipt.mimeType,
-        receiptBase64: receipt.base64,
         submittedAt: new Date().toISOString(),
       };
 
@@ -1080,17 +1088,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
       statusText.textContent =
         `Registration ${registrationId} was submitted. ` +
-        "Generating your downloadable receipt...";
+        "Generating your registration receipt...";
       statusText.className = "form-status success";
 
-      await prepareDownloadableReceipt(
+      await prepareGeneratedReceipt(
         submission,
         receipt.dataUrl,
       );
 
       statusText.textContent =
         `Registration ${registrationId} was submitted. ` +
-        "Your receipt is ready to download.";
+        "Your receipt is ready. Save the image or take a screenshot of this page.";
 
       form.reset();
       clearReceiptPreview();
@@ -1124,8 +1132,6 @@ document.addEventListener("DOMContentLoaded", () => {
   registerAnotherButton.addEventListener("click", () => {
     generatedReceiptSection.hidden = true;
     generatedReceiptPreview.removeAttribute("src");
-    downloadReceiptButton.removeAttribute("href");
-    downloadReceiptButton.removeAttribute("download");
 
     registrationFormCard.classList.remove("is-complete");
 
@@ -1155,18 +1161,6 @@ document.addEventListener("DOMContentLoaded", () => {
       block: "start",
     });
 
-    fullNameInput.focus();
-  });
-
-  if (isFacebookInAppBrowser()) {
-    inAppBrowserOverlay.hidden = false;
-    document.body.classList.add("modal-open");
-    continueAnyway.focus();
-  }
-
-  continueAnyway.addEventListener("click", () => {
-    inAppBrowserOverlay.hidden = true;
-    document.body.classList.remove("modal-open");
     fullNameInput.focus();
   });
 

@@ -1,8 +1,4 @@
 const SHEET_NAME = "Registrations";
-const RECEIPT_FOLDER_ID =
-  "1QhENl73e9uamD5C9i6ad4Zd-7YravbGO";
-
-const MAX_RECEIPT_BYTES = 5 * 1024 * 1024;
 
 function doGet() {
   return jsonResponse_({
@@ -12,13 +8,9 @@ function doGet() {
 }
 
 function doPost(e) {
-  let receiptFile = null;
-
   try {
     if (!e || !e.parameter) {
-      throw new Error(
-        "No registration data was received.",
-      );
+      throw new Error("No registration data was received.");
     }
 
     const data = e.parameter;
@@ -48,11 +40,6 @@ function doPost(e) {
         : 0;
     const totalFee = Number(data.totalFee || 0);
 
-    receiptFile = saveReceipt_(
-      data,
-      registrationId,
-    );
-
     const spreadsheet =
       SpreadsheetApp.getActiveSpreadsheet();
     const sheet =
@@ -64,27 +51,23 @@ function doPost(e) {
       );
     }
 
-    ensureAdditionalTruckHeaders_(sheet);
-
-    const receiptFileName =
-      receiptFile.getName();
-    const receiptUrl = receiptFile.getUrl();
+    ensureHeaders_(sheet);
 
     sheet.appendRow([
-      new Date(),
-      registrationId,
-      sanitizeCell_(data.fullName),
-      sanitizeCell_(data.category),
-      sanitizeCell_(data.registrationType),
-      sanitizeCell_(data.shirtSize),
-      kidsAddon,
-      kidsCount,
-      totalFee,
-      receiptFileName,
-      receiptUrl,
-      data.submittedAt || "",
-      additionalTruck,
-      additionalTruckCount,
+      new Date(),                         // A Timestamp
+      registrationId,                    // B Registration ID
+      sanitizeCell_(data.fullName),       // C Full Name
+      sanitizeCell_(data.category),       // D Category
+      sanitizeCell_(data.registrationType), // E Registration Type
+      sanitizeCell_(data.shirtSize),      // F Shirt Size
+      kidsAddon,                          // G Kids Add-on
+      kidsCount,                          // H Number of Kids
+      totalFee,                           // I Total Fee
+      "",                                 // J Receipt Filename (unused)
+      "",                                 // K Receipt URL (unused)
+      data.submittedAt || "",             // L Submitted At
+      additionalTruck,                    // M Additional Truck
+      additionalTruckCount,               // N Additional Truck Count
     ]);
 
     SpreadsheetApp.flush();
@@ -92,25 +75,10 @@ function doPost(e) {
     return jsonResponse_({
       success: true,
       registrationId,
-      receiptFileName,
-      receiptUrl,
-      message:
-        "Registration and receipt saved successfully.",
+      message: "Registration saved successfully.",
     });
   } catch (error) {
     console.error(error);
-
-    // Remove the receipt if saving the Sheet row fails.
-    if (receiptFile) {
-      try {
-        receiptFile.setTrashed(true);
-      } catch (cleanupError) {
-        console.error(
-          "Unable to remove orphan receipt:",
-          cleanupError,
-        );
-      }
-    }
 
     return jsonResponse_({
       success: false,
@@ -129,14 +97,11 @@ function validateRegistrationData_(data) {
     "category",
     "registrationType",
     "shirtSize",
-    "receiptBase64",
   ];
 
   requiredFields.forEach(function (field) {
     if (!String(data[field] || "").trim()) {
-      throw new Error(
-        `Missing required field: ${field}`,
-      );
+      throw new Error(`Missing required field: ${field}`);
     }
   });
 
@@ -147,9 +112,7 @@ function validateRegistrationData_(data) {
       String(data.category).trim(),
     )
   ) {
-    throw new Error(
-      "Invalid participant category.",
-    );
+    throw new Error("Invalid participant category.");
   }
 
   const allowedRegistrationTypes = [
@@ -163,17 +126,13 @@ function validateRegistrationData_(data) {
       String(data.registrationType).trim(),
     )
   ) {
-    throw new Error(
-      "Invalid registration type.",
-    );
+    throw new Error("Invalid registration type.");
   }
 
   const totalFee = Number(data.totalFee);
 
   if (!Number.isFinite(totalFee) || totalFee < 0) {
-    throw new Error(
-      "Invalid total registration fee.",
-    );
+    throw new Error("Invalid total registration fee.");
   }
 
   if (data.kidsAddon === "Yes") {
@@ -186,10 +145,10 @@ function validateRegistrationData_(data) {
       String(data.category).trim() !== "Adult" ||
       !Number.isInteger(kidsCount) ||
       kidsCount < 1 ||
-      kidsCount > 10
+      kidsCount > 2
     ) {
       throw new Error(
-        "The number of kids must be from 1 to 10.",
+        "The number of kids must be from 1 to 2.",
       );
     }
   }
@@ -204,111 +163,54 @@ function validateRegistrationData_(data) {
       String(data.category).trim() !== "Adult" ||
       !Number.isInteger(additionalTruckCount) ||
       additionalTruckCount < 1 ||
-      additionalTruckCount > 10
+      additionalTruckCount > 2
     ) {
       throw new Error(
-        "The number of additional trucks must be from 1 to 10.",
+        "The number of additional trucks must be from 1 to 2.",
       );
     }
   }
 }
 
-function ensureAdditionalTruckHeaders_(sheet) {
-  if (!sheet.getRange("M1").getValue()) {
-    sheet.getRange("M1").setValue("Additional Truck");
-  }
-
-  if (!sheet.getRange("N1").getValue()) {
-    sheet
-      .getRange("N1")
-      .setValue("Number of Additional Trucks");
-  }
-}
-
-function saveReceipt_(data, registrationId) {
-  const receiptBase64 = String(
-    data.receiptBase64 || "",
-  ).trim();
-
-  const receiptMimeType = String(
-    data.receiptMimeType || "image/jpeg",
-  ).trim();
-
-  const allowedMimeTypes = [
-    "image/jpeg",
-    "image/png",
-    "image/webp",
+function ensureHeaders_(sheet) {
+  const headers = [
+    "Timestamp",
+    "Registration ID",
+    "Full Name",
+    "Category",
+    "Registration Type",
+    "Shirt Size",
+    "Kids Add-on",
+    "Number of Kids",
+    "Total Fee",
+    "Receipt Filename",
+    "Receipt Drive URL",
+    "Submitted At",
+    "Additional Truck",
+    "Number of Additional Trucks",
   ];
 
-  if (
-    !allowedMimeTypes.includes(
-      receiptMimeType,
-    )
-  ) {
-    throw new Error(
-      "Unsupported receipt image type.",
-    );
+  if (sheet.getLastRow() === 0) {
+    sheet.appendRow(headers);
+    return;
   }
 
-  const bytes =
-    Utilities.base64Decode(receiptBase64);
-
-  if (!bytes.length) {
-    throw new Error(
-      "The receipt image is empty.",
-    );
-  }
-
-  if (bytes.length > MAX_RECEIPT_BYTES) {
-    throw new Error(
-      "The receipt image exceeds the 5 MB limit.",
-    );
-  }
-
-  const extensionByMimeType = {
-    "image/jpeg": "jpg",
-    "image/png": "png",
-    "image/webp": "webp",
-  };
-
-  const extension =
-    extensionByMimeType[receiptMimeType];
-  const participantName =
-    sanitizeFileName_(data.fullName);
-  const fileName =
-    `${registrationId}-${participantName}.${extension}`;
-
-  const blob = Utilities.newBlob(
-    bytes,
-    receiptMimeType,
-    fileName,
-  );
-
-  const folder =
-    DriveApp.getFolderById(RECEIPT_FOLDER_ID);
-
-  return folder.createFile(blob);
+  headers.forEach(function (header, index) {
+    const cell = sheet.getRange(1, index + 1);
+    if (!cell.getValue()) {
+      cell.setValue(header);
+    }
+  });
 }
 
 function sanitizeCell_(value) {
   const text = String(value || "").trim();
 
-  // Prevent spreadsheet formula injection.
   if (/^[=+\-@]/.test(text)) {
     return `'${text}`;
   }
 
   return text;
-}
-
-function sanitizeFileName_(value) {
-  return (
-    String(value || "")
-      .trim()
-      .replace(/[^a-zA-Z0-9_-]+/g, "-")
-      .replace(/^-+|-+$/g, "") ||
-    "participant"
-  );
 }
 
 function jsonResponse_(data) {
@@ -317,10 +219,7 @@ function jsonResponse_(data) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
-// Run this manually once if Apps Script asks for authorization.
-function authorizeDriveAndSheets() {
-  const folder =
-    DriveApp.getFolderById(RECEIPT_FOLDER_ID);
+function authorizeSheets() {
   const sheet =
     SpreadsheetApp
       .getActiveSpreadsheet()
@@ -332,6 +231,5 @@ function authorizeDriveAndSheets() {
     );
   }
 
-  console.log(folder.getName());
   console.log(sheet.getName());
 }
