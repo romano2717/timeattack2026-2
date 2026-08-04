@@ -26,54 +26,54 @@ const REGISTRATION_FEES = {
 
 document.addEventListener("DOMContentLoaded", () => {
   const form = document.getElementById("registration-form");
-  const registrationFormCard =
-    document.getElementById("registrationFormCard");
+  const registrationFormCard = document.getElementById("registrationFormCard");
   const categoryInput = document.getElementById("category");
   const fullNameInput = document.getElementById("fullName");
   const shirtSizeInput = document.getElementById("shirtSize");
-  const paymentReceiptInput =
-    document.getElementById("paymentReceipt");
-  const paymentReceiptPreview =
-    document.getElementById("paymentReceiptPreview");
-  const registrationTypeBadge =
-    document.getElementById("registrationTypeBadge");
-  const registrationTypeBadgeLabel =
-    document.getElementById("registrationTypeBadgeLabel");
-  const registrationTypeBadgeFee =
-    document.getElementById("registrationTypeBadgeFee");
+  const paymentReceiptInput = document.getElementById("paymentReceipt");
+  const paymentReceiptPreview = document.getElementById(
+    "paymentReceiptPreview",
+  );
+  const registrationTypeBadge = document.getElementById(
+    "registrationTypeBadge",
+  );
+  const registrationTypeBadgeLabel = document.getElementById(
+    "registrationTypeBadgeLabel",
+  );
+  const registrationTypeBadgeFee = document.getElementById(
+    "registrationTypeBadgeFee",
+  );
   const kidsAddonInput = document.getElementById("kidsAddon");
-  const adultAddonsContainer =
-    document.getElementById("adultAddonsContainer");
-  const kidsCountField =
-    document.getElementById("kids-count-field");
+  const adultAddonsContainer = document.getElementById("adultAddonsContainer");
+  const kidsCountField = document.getElementById("kids-count-field");
   const kidsCountInput = document.getElementById("kidsCount");
-  const additionalTruckInput =
-    document.getElementById("additionalTruck");
-  const additionalTruckCountField =
-    document.getElementById("additional-truck-count-field");
-  const additionalTruckCountInput =
-    document.getElementById("additionalTruckCount");
+  const additionalTruckInput = document.getElementById("additionalTruck");
+  const additionalTruckCountField = document.getElementById(
+    "additional-truck-count-field",
+  );
+  const additionalTruckCountInput = document.getElementById(
+    "additionalTruckCount",
+  );
   const totalFeeInput = document.getElementById("totalFee");
-  const baseFeeDisplay =
-    document.getElementById("baseFeeDisplay");
-  const kidsAddonLabel =
-    document.getElementById("kidsAddonLabel");
-  const kidsAddonFeeDisplay =
-    document.getElementById("kidsAddonFeeDisplay");
-  const additionalTruckLabel =
-    document.getElementById("additionalTruckLabel");
-  const additionalTruckFeeDisplay =
-    document.getElementById("additionalTruckFeeDisplay");
-  const totalFeeDisplay =
-    document.getElementById("totalFeeDisplay");
+  const baseFeeDisplay = document.getElementById("baseFeeDisplay");
+  const kidsAddonLabel = document.getElementById("kidsAddonLabel");
+  const kidsAddonFeeDisplay = document.getElementById("kidsAddonFeeDisplay");
+  const additionalTruckLabel = document.getElementById("additionalTruckLabel");
+  const additionalTruckFeeDisplay = document.getElementById(
+    "additionalTruckFeeDisplay",
+  );
+  const totalFeeDisplay = document.getElementById("totalFeeDisplay");
   const statusText = document.getElementById("form-status");
   const submitButton = document.getElementById("submit-button");
-  const generatedReceiptSection =
-    document.getElementById("generatedReceiptSection");
-  const generatedReceiptPreview =
-    document.getElementById("generatedReceiptPreview");
-  const registerAnotherButton =
-    document.getElementById("registerAnotherButton");
+  const generatedReceiptSection = document.getElementById(
+    "generatedReceiptSection",
+  );
+  const generatedReceiptPreview = document.getElementById(
+    "generatedReceiptPreview",
+  );
+  const registerAnotherButton = document.getElementById(
+    "registerAnotherButton",
+  );
 
   if (
     !form ||
@@ -106,9 +106,7 @@ document.addEventListener("DOMContentLoaded", () => {
     !generatedReceiptPreview ||
     !registerAnotherButton
   ) {
-    console.error(
-      "One or more registration form elements are missing.",
-    );
+    console.error("One or more registration form elements are missing.");
     return;
   }
 
@@ -128,14 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateRegistrationTypeBadge() {
     const category = categoryInput.value || "Adult";
-    const baseFee =
-      REGISTRATION_FEES[category]?.[REGISTRATION_TYPE] ?? 0;
+    const baseFee = REGISTRATION_FEES[category]?.[REGISTRATION_TYPE] ?? 0;
 
-    registrationTypeBadgeLabel.textContent =
-      REGISTRATION_TYPE.toUpperCase();
+    registrationTypeBadgeLabel.textContent = REGISTRATION_TYPE.toUpperCase();
 
-    registrationTypeBadgeFee.textContent =
-      `${formatPeso(baseFee)} ENTRY`;
+    registrationTypeBadgeFee.textContent = `${formatPeso(baseFee)} ENTRY`;
 
     registrationTypeBadge.setAttribute(
       "aria-label",
@@ -150,74 +145,49 @@ document.addEventListener("DOMContentLoaded", () => {
   function calculateTotalFee() {
     const category = categoryInput.value;
 
-    const baseFee =
-      REGISTRATION_FEES[category]?.[REGISTRATION_TYPE] ?? 0;
+    const baseFee = REGISTRATION_FEES[category]?.[REGISTRATION_TYPE] ?? 0;
 
     const numberOfKids =
       category === "Adult" && kidsAddonInput.checked
-        ? Math.max(
-            1,
-            Number.parseInt(
-              kidsCountInput.value || "1",
-              10,
-            ) || 1,
-          )
+        ? Math.max(1, Number.parseInt(kidsCountInput.value || "1", 10) || 1)
         : 0;
 
     const numberOfAdditionalTrucks =
       category === "Adult" && additionalTruckInput.checked
         ? Math.max(
             1,
-            Number.parseInt(
-              additionalTruckCountInput.value || "1",
-              10,
-            ) || 1,
+            Number.parseInt(additionalTruckCountInput.value || "1", 10) || 1,
           )
         : 0;
 
-    const kidsAddonFee =
-      numberOfKids * KIDS_ADDON_PRICE;
+    const kidsAddonFee = numberOfKids * KIDS_ADDON_PRICE;
 
     const additionalTruckFee =
-      numberOfAdditionalTrucks *
-      ADDITIONAL_TRUCK_PRICE;
+      numberOfAdditionalTrucks * ADDITIONAL_TRUCK_PRICE;
 
-    const total =
-      baseFee +
-      kidsAddonFee +
-      additionalTruckFee;
+    const total = baseFee + kidsAddonFee + additionalTruckFee;
 
-    baseFeeDisplay.textContent =
-      formatPeso(baseFee);
+    baseFeeDisplay.textContent = formatPeso(baseFee);
 
-    kidsAddonLabel.textContent =
-      kidsAddonInput.checked
-        ? `Kids add-on (${numberOfKids} × ${formatPeso(
-            KIDS_ADDON_PRICE,
-          )})`
-        : "Kids add-on";
+    kidsAddonLabel.textContent = kidsAddonInput.checked
+      ? `Kids add-on (${numberOfKids} × ${formatPeso(KIDS_ADDON_PRICE)})`
+      : "Kids add-on";
 
-    kidsAddonFeeDisplay.textContent =
-      formatPeso(kidsAddonFee);
+    kidsAddonFeeDisplay.textContent = formatPeso(kidsAddonFee);
 
-    additionalTruckLabel.textContent =
-      additionalTruckInput.checked
-        ? `Additional Truck (${numberOfAdditionalTrucks} × ${formatPeso(
-            ADDITIONAL_TRUCK_PRICE,
-          )})`
-        : "Additional Truck";
+    additionalTruckLabel.textContent = additionalTruckInput.checked
+      ? `Additional Truck (${numberOfAdditionalTrucks} × ${formatPeso(
+          ADDITIONAL_TRUCK_PRICE,
+        )})`
+      : "Additional Truck";
 
-    additionalTruckFeeDisplay.textContent =
-      formatPeso(additionalTruckFee);
+    additionalTruckFeeDisplay.textContent = formatPeso(additionalTruckFee);
 
-    totalFeeDisplay.textContent =
-      formatPeso(total);
+    totalFeeDisplay.textContent = formatPeso(total);
 
-    totalFeeInput.value =
-      formatPeso(total);
+    totalFeeInput.value = formatPeso(total);
 
-    totalFeeInput.dataset.amount =
-      String(total);
+    totalFeeInput.dataset.amount = String(total);
   }
 
   function updateCategoryFields() {
@@ -298,28 +268,18 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function validateReceiptFile(file) {
-    const allowedTypes = [
-      "image/jpeg",
-      "image/png",
-      "image/webp",
-    ];
+    const allowedTypes = ["image/jpeg", "image/png", "image/webp"];
 
     if (!file) {
-      throw new Error(
-        "Please upload your GCash payment receipt.",
-      );
+      throw new Error("Please upload your GCash payment receipt.");
     }
 
     if (!allowedTypes.includes(file.type)) {
-      throw new Error(
-        "The receipt must be a JPG, PNG, or WebP image.",
-      );
+      throw new Error("The receipt must be a JPG, PNG, or WebP image.");
     }
 
     if (file.size > MAX_RECEIPT_FILE_SIZE) {
-      throw new Error(
-        "The receipt image must not exceed 5 MB.",
-      );
+      throw new Error("The receipt image must not exceed 5 MB.");
     }
   }
 
@@ -329,11 +289,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       reader.onload = () => resolve(String(reader.result));
       reader.onerror = () =>
-        reject(
-          new Error(
-            "Unable to read the selected receipt image.",
-          ),
-        );
+        reject(new Error("Unable to read the selected receipt image."));
 
       reader.readAsDataURL(file);
     });
@@ -345,11 +301,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       image.onload = () => resolve(image);
       image.onerror = () =>
-        reject(
-          new Error(
-            "The selected receipt image could not be processed.",
-          ),
-        );
+        reject(new Error("The selected receipt image could not be processed."));
 
       image.src = dataUrl;
     });
@@ -362,18 +314,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const image = await loadImage(originalDataUrl);
     const scale = Math.min(
       1,
-      MAX_RECEIPT_DIMENSION /
-        Math.max(image.width, image.height),
+      MAX_RECEIPT_DIMENSION / Math.max(image.width, image.height),
     );
 
-    const width = Math.max(
-      1,
-      Math.round(image.width * scale),
-    );
-    const height = Math.max(
-      1,
-      Math.round(image.height * scale),
-    );
+    const width = Math.max(1, Math.round(image.width * scale));
+    const height = Math.max(1, Math.round(image.height * scale));
 
     const canvas = document.createElement("canvas");
     canvas.width = width;
@@ -382,17 +327,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const context = canvas.getContext("2d");
 
     if (!context) {
-      throw new Error(
-        "Unable to prepare the receipt image.",
-      );
+      throw new Error("Unable to prepare the receipt image.");
     }
 
     context.drawImage(image, 0, 0, width, height);
 
-    const dataUrl = canvas.toDataURL(
-      "image/jpeg",
-      RECEIPT_JPEG_QUALITY,
-    );
+    const dataUrl = canvas.toDataURL("image/jpeg", RECEIPT_JPEG_QUALITY);
 
     return {
       dataUrl,
@@ -401,13 +341,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-
   function loadCanvasImage(source) {
     return new Promise((resolve, reject) => {
       const image = new Image();
       image.onload = () => resolve(image);
-      image.onerror = () =>
-        reject(new Error("Unable to load receipt image."));
+      image.onerror = () => reject(new Error("Unable to load receipt image."));
       image.src = source;
     });
   }
@@ -419,11 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
           if (blob) {
             resolve(blob);
           } else {
-            reject(
-              new Error(
-                "Unable to create the downloadable receipt.",
-              ),
-            );
+            reject(new Error("Unable to create the downloadable receipt."));
           }
         },
         "image/png",
@@ -454,20 +388,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function drawLabelValue(
-    context,
-    label,
-    value,
-    x,
-    y,
-    width,
-  ) {
+  function drawLabelValue(context, label, value, x, y, width) {
     context.fillStyle = "#a84a13";
-    context.font = '700 24px Arial, sans-serif';
+    context.font = "700 24px Arial, sans-serif";
     context.fillText(label.toUpperCase(), x, y);
 
     context.fillStyle = "#21170f";
-    context.font = '700 30px Arial, sans-serif';
+    context.font = "700 30px Arial, sans-serif";
 
     const text = String(value || "—");
     const words = text.split(/\s+/);
@@ -477,10 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
     words.forEach((word, index) => {
       const testLine = line ? `${line} ${word}` : word;
 
-      if (
-        context.measureText(testLine).width > width &&
-        line
-      ) {
+      if (context.measureText(testLine).width > width && line) {
         context.fillText(line, x, currentY);
         line = word;
         currentY += 34;
@@ -500,10 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
     context.stroke();
   }
 
-  async function generatePremiumReceipt(
-    submission,
-    paymentReceiptDataUrl,
-  ) {
+  async function generatePremiumReceipt(submission, paymentReceiptDataUrl) {
     const canvas = document.createElement("canvas");
     canvas.width = 1080;
     canvas.height = 2860;
@@ -511,9 +432,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const context = canvas.getContext("2d");
 
     if (!context) {
-      throw new Error(
-        "Your browser cannot generate the receipt image.",
-      );
+      throw new Error("Your browser cannot generate the receipt image.");
     }
 
     const orange = "#ef6c22";
@@ -525,12 +444,7 @@ document.addEventListener("DOMContentLoaded", () => {
     context.fillStyle = ink;
     context.fillRect(0, 0, canvas.width, canvas.height);
 
-    const headerGradient = context.createLinearGradient(
-      0,
-      0,
-      canvas.width,
-      0,
-    );
+    const headerGradient = context.createLinearGradient(0, 0, canvas.width, 0);
     headerGradient.addColorStop(0, "#130f0b");
     headerGradient.addColorStop(0.55, "#26170d");
     headerGradient.addColorStop(1, "#130f0b");
@@ -540,10 +454,7 @@ document.addEventListener("DOMContentLoaded", () => {
     context.globalAlpha = 0.25;
     for (let index = 0; index < 90; index += 1) {
       const radius = 3 + Math.random() * 22;
-      const x =
-        index < 45
-          ? Math.random() * 220
-          : 860 + Math.random() * 220;
+      const x = index < 45 ? Math.random() * 220 : 860 + Math.random() * 220;
       const y = Math.random() * 300;
 
       context.beginPath();
@@ -560,70 +471,43 @@ document.addEventListener("DOMContentLoaded", () => {
     context.lineWidth = 8;
     context.strokeRect(0, 0, 125, 125);
     context.fillStyle = orange;
-    context.font = '700 68px Arial Black, Arial';
+    context.font = "700 68px Arial Black, Arial";
     context.fillText("MF", 14, 88);
     context.restore();
 
     context.fillStyle = cream;
-    context.font = '700 76px Arial Black, Arial';
+    context.font = "700 76px Arial Black, Arial";
     context.fillText("MUDFEST", 220, 115);
 
     context.fillStyle = orange;
-    context.font = '700 76px Arial Black, Arial';
+    context.font = "700 76px Arial Black, Arial";
     context.fillText("RECEIPT", 620, 115);
 
     context.fillStyle = "#d2c3ad";
-    context.font = '600 24px Arial, sans-serif';
+    context.font = "600 24px Arial, sans-serif";
     context.fillText("SOUTHSIDE CEBU RC", 224, 158);
 
     context.fillStyle = orange;
-    context.font = '700 26px Arial, sans-serif';
-    context.fillText(
-      "OFFICIAL REGISTRATION COPY",
-      619,
-      158,
-    );
+    context.font = "700 26px Arial, sans-serif";
+    context.fillText("OFFICIAL REGISTRATION COPY", 619, 158);
 
-    drawRoundedRect(
-      context,
-      30,
-      225,
-      1020,
-      2505,
-      8,
-      cream,
-      "#5b2d16",
-    );
+    drawRoundedRect(context, 30, 225, 1020, 2505, 8, cream, "#5b2d16");
 
     // Registration ID and timestamp stacked vertically.
-    drawRoundedRect(
-      context,
-      60,
-      265,
-      960,
-      175,
-      14,
-      mudDark,
-    );
+    drawRoundedRect(context, 60, 265, 960, 175, 14, mudDark);
 
     context.fillStyle = orange;
-    context.font = '700 24px Arial, sans-serif';
+    context.font = "700 24px Arial, sans-serif";
     context.fillText("REGISTRATION ID", 90, 310);
 
     context.fillStyle = cream;
-    context.font = '700 39px Arial, sans-serif';
-    context.fillText(
-      submission.registrationId,
-      90,
-      360,
-    );
+    context.font = "700 39px Arial, sans-serif";
+    context.fillText(submission.registrationId, 90, 360);
 
-    const submittedDate = new Date(
-      submission.submittedAt,
-    );
+    const submittedDate = new Date(submission.submittedAt);
 
     context.fillStyle = "#d8c8b2";
-    context.font = '600 24px Arial, sans-serif';
+    context.font = "600 24px Arial, sans-serif";
     context.fillText(
       submittedDate.toLocaleString("en-PH", {
         dateStyle: "medium",
@@ -634,12 +518,8 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     context.fillStyle = orangeDark;
-    context.font = '700 34px Arial Black, Arial';
-    context.fillText(
-      "REGISTRATION DETAILS",
-      70,
-      500,
-    );
+    context.font = "700 34px Arial Black, Arial";
+    context.fillText("REGISTRATION DETAILS", 70, 500);
 
     drawRoundedRect(
       context,
@@ -727,7 +607,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     context.fillStyle = orangeDark;
-    context.font = '700 34px Arial Black, Arial';
+    context.font = "700 34px Arial Black, Arial";
     context.fillText("FEE BREAKDOWN", 70, 1090);
 
     drawRoundedRect(
@@ -742,17 +622,13 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     const baseFee =
-      REGISTRATION_FEES[submission.category]?.[
-        submission.registrationType
-      ] ?? 0;
+      REGISTRATION_FEES[submission.category]?.[submission.registrationType] ??
+      0;
 
-    const kidsFee =
-      Number(submission.kidsCount || 0) *
-      KIDS_ADDON_PRICE;
+    const kidsFee = Number(submission.kidsCount || 0) * KIDS_ADDON_PRICE;
 
     const truckFee =
-      Number(submission.additionalTruckCount || 0) *
-      ADDITIONAL_TRUCK_PRICE;
+      Number(submission.additionalTruckCount || 0) * ADDITIONAL_TRUCK_PRICE;
 
     const rows = [
       [
@@ -764,12 +640,14 @@ document.addEventListener("DOMContentLoaded", () => {
         kidsFee,
       ],
       [
-        `Additional Truck (${submission.additionalTruckCount || 0} × ₱${ADDITIONAL_TRUCK_PRICE})`,
+        `Additional Truck (${
+          submission.additionalTruckCount || 0
+        } × ₱${ADDITIONAL_TRUCK_PRICE})`,
         truckFee,
       ],
     ];
 
-    context.font = '600 28px Arial, sans-serif';
+    context.font = "600 28px Arial, sans-serif";
 
     rows.forEach(([label, amount], index) => {
       const rowY = 1180 + index * 65;
@@ -777,11 +655,7 @@ document.addEventListener("DOMContentLoaded", () => {
       context.textAlign = "left";
       context.fillText(label, 90, rowY);
       context.textAlign = "right";
-      context.fillText(
-        formatPeso(Number(amount)),
-        980,
-        rowY,
-      );
+      context.fillText(formatPeso(Number(amount)), 980, rowY);
     });
 
     context.strokeStyle = "rgba(42,26,16,.26)";
@@ -791,24 +665,16 @@ document.addEventListener("DOMContentLoaded", () => {
     context.stroke();
 
     context.fillStyle = orangeDark;
-    context.font = '700 34px Arial Black, Arial';
+    context.font = "700 34px Arial Black, Arial";
     context.textAlign = "left";
     context.fillText("TOTAL FEE", 90, 1410);
     context.textAlign = "right";
-    context.fillText(
-      formatPeso(Number(submission.totalFee || 0)),
-      980,
-      1410,
-    );
+    context.fillText(formatPeso(Number(submission.totalFee || 0)), 980, 1410);
     context.textAlign = "left";
 
     context.fillStyle = orangeDark;
-    context.font = '700 34px Arial Black, Arial';
-    context.fillText(
-      "PAYMENT RECEIPT SCREENSHOT",
-      70,
-      1485,
-    );
+    context.font = "700 34px Arial Black, Arial";
+    context.fillText("PAYMENT RECEIPT SCREENSHOT", 70, 1485);
 
     // Larger screenshot area for readability.
     drawRoundedRect(
@@ -834,29 +700,14 @@ document.addEventListener("DOMContentLoaded", () => {
       "rgba(42,26,16,.38)",
     );
 
-    drawRoundedRect(
-      context,
-      275,
-      1605,
-      530,
-      960,
-      22,
-      "#ffffff",
-    );
+    drawRoundedRect(context, 275, 1605, 530, 960, 22, "#ffffff");
 
     context.fillStyle = "#2b2b2b";
     context.beginPath();
-    context.roundRect(
-      460,
-      1578,
-      160,
-      12,
-      6,
-    );
+    context.roundRect(460, 1578, 160, 12, 6);
     context.fill();
 
-    const paymentImage =
-      await loadCanvasImage(paymentReceiptDataUrl);
+    const paymentImage = await loadCanvasImage(paymentReceiptDataUrl);
 
     const imageMaxWidth = 500;
     const imageMaxHeight = 920;
@@ -870,13 +721,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const imageX = 275 + (530 - imageWidth) / 2;
     const imageY = 1605 + (960 - imageHeight) / 2;
 
-    context.drawImage(
-      paymentImage,
-      imageX,
-      imageY,
-      imageWidth,
-      imageHeight,
-    );
+    context.drawImage(paymentImage, imageX, imageY, imageWidth, imageHeight);
 
     const footerGradient = context.createLinearGradient(
       0,
@@ -891,15 +736,11 @@ document.addEventListener("DOMContentLoaded", () => {
     context.fillRect(0, 2730, 1080, 130);
 
     context.fillStyle = "#1b1008";
-    context.font = '700 32px Arial Black, Arial';
+    context.font = "700 32px Arial Black, Arial";
     context.textAlign = "center";
-    context.fillText(
-      "THANK YOU FOR BEING PART OF MUDFEST!",
-      540,
-      2785,
-    );
+    context.fillText("THANK YOU FOR BEING PART OF MUDFEST!", 540, 2785);
 
-    context.font = '600 21px Arial, sans-serif';
+    context.font = "600 21px Arial, sans-serif";
     context.fillText(
       "Keep this receipt and present it during event check-in.",
       540,
@@ -910,10 +751,7 @@ document.addEventListener("DOMContentLoaded", () => {
     return canvas;
   }
 
-  async function prepareGeneratedReceipt(
-    submission,
-    paymentReceiptDataUrl,
-  ) {
+  async function prepareGeneratedReceipt(submission, paymentReceiptDataUrl) {
     const canvas = await generatePremiumReceipt(
       submission,
       paymentReceiptDataUrl,
@@ -935,8 +773,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function postToAppsScript(data) {
     return new Promise((resolve) => {
-      const iframeName =
-        `mudfest-submit-${Date.now()}`;
+      const iframeName = `mudfest-submit-${Date.now()}`;
 
       const iframe = document.createElement("iframe");
       iframe.name = iframeName;
@@ -983,56 +820,36 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  paymentReceiptInput.addEventListener(
-    "change",
-    async () => {
-      clearReceiptPreview();
-      statusText.textContent = "";
-      statusText.className = "form-status";
+  paymentReceiptInput.addEventListener("change", async () => {
+    clearReceiptPreview();
+    statusText.textContent = "";
+    statusText.className = "form-status";
 
-      const file = paymentReceiptInput.files?.[0];
+    const file = paymentReceiptInput.files?.[0];
 
-      if (!file) return;
+    if (!file) return;
 
-      try {
-        validateReceiptFile(file);
-        paymentReceiptPreview.src =
-          await readFileAsDataUrl(file);
-        paymentReceiptPreview.hidden = false;
-      } catch (error) {
-        paymentReceiptInput.value = "";
-        statusText.textContent =
-          error?.message ||
-          "Unable to use the selected receipt.";
-        statusText.className = "form-status error";
-      }
-    },
-  );
+    try {
+      validateReceiptFile(file);
+      paymentReceiptPreview.src = await readFileAsDataUrl(file);
+      paymentReceiptPreview.hidden = false;
+    } catch (error) {
+      paymentReceiptInput.value = "";
+      statusText.textContent =
+        error?.message || "Unable to use the selected receipt.";
+      statusText.className = "form-status error";
+    }
+  });
 
-  categoryInput.addEventListener(
-    "change",
-    updateCategoryFields,
-  );
+  categoryInput.addEventListener("change", updateCategoryFields);
 
-  kidsAddonInput.addEventListener(
-    "change",
-    updateKidsAddonFields,
-  );
+  kidsAddonInput.addEventListener("change", updateKidsAddonFields);
 
-  additionalTruckInput.addEventListener(
-    "change",
-    updateAdditionalTruckFields,
-  );
+  additionalTruckInput.addEventListener("change", updateAdditionalTruckFields);
 
-  additionalTruckCountInput.addEventListener(
-    "change",
-    calculateTotalFee,
-  );
+  additionalTruckCountInput.addEventListener("change", calculateTotalFee);
 
-  kidsCountInput.addEventListener(
-    "change",
-    calculateTotalFee,
-  );
+  kidsCountInput.addEventListener("change", calculateTotalFee);
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
@@ -1045,12 +862,9 @@ document.addEventListener("DOMContentLoaded", () => {
     try {
       calculateTotalFee();
 
-      const receiptFile =
-        paymentReceiptInput.files?.[0];
-      const receipt =
-        await prepareReceipt(receiptFile);
-      const registrationId =
-        createRegistrationId();
+      const receiptFile = paymentReceiptInput.files?.[0];
+      const receipt = await prepareReceipt(receiptFile);
+      const registrationId = createRegistrationId();
 
       const submission = {
         action: "submitRegistration",
@@ -1060,27 +874,22 @@ document.addEventListener("DOMContentLoaded", () => {
         registrationType: REGISTRATION_TYPE,
         shirtSize: shirtSizeInput.value,
         kidsAddon:
-          categoryInput.value === "Adult" &&
-          kidsAddonInput.checked
+          categoryInput.value === "Adult" && kidsAddonInput.checked
             ? "Yes"
             : "No",
         kidsCount:
-          categoryInput.value === "Adult" &&
-          kidsAddonInput.checked
+          categoryInput.value === "Adult" && kidsAddonInput.checked
             ? kidsCountInput.value
             : "0",
         additionalTruck:
-          categoryInput.value === "Adult" &&
-          additionalTruckInput.checked
+          categoryInput.value === "Adult" && additionalTruckInput.checked
             ? "Yes"
             : "No",
         additionalTruckCount:
-          categoryInput.value === "Adult" &&
-          additionalTruckInput.checked
+          categoryInput.value === "Adult" && additionalTruckInput.checked
             ? additionalTruckCountInput.value
             : "0",
-        totalFee:
-          totalFeeInput.dataset.amount || "0",
+        totalFee: totalFeeInput.dataset.amount || "0",
         submittedAt: new Date().toISOString(),
       };
 
@@ -1091,10 +900,7 @@ document.addEventListener("DOMContentLoaded", () => {
         "Generating your registration receipt...";
       statusText.className = "form-status success";
 
-      await prepareGeneratedReceipt(
-        submission,
-        receipt.dataUrl,
-      );
+      await prepareGeneratedReceipt(submission, receipt.dataUrl);
 
       statusText.textContent =
         `Registration ${registrationId} was submitted. ` +
@@ -1114,11 +920,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
       updateRegistrationTypeBadge();
       updateCategoryFields();
+
+      setTimeout(() => {
+        alert(
+          "Take a screenshot of this page or save the receipt image using your browser's image options. Present it during event check-in.",
+        );
+      }, 500);
     } catch (error) {
-      console.error(
-        "Registration submission failed:",
-        error,
-      );
+      console.error("Registration submission failed:", error);
 
       statusText.textContent =
         error?.message ||
