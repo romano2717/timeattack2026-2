@@ -27,7 +27,7 @@ const REGISTRATION_FEES = {
 function isFacebookInAppBrowser() {
   const userAgent =
     navigator.userAgent || navigator.vendor || "";
-  
+  alert(userAgent)
   return /FBAN|FBAV|FB_IAB|Messenger|Instagram/i.test(
     userAgent,
   );
