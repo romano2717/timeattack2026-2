@@ -1054,3 +1054,66 @@ body.modal-open {
 #sponsors .button{
   display:inline-flex;
 }
+
+
+/* Venue camping and spectator callout */
+.venue-camp-callout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 18px;
+  align-items: start;
+  margin: 0 0 30px;
+  padding: 24px;
+  color: var(--mud-dark);
+  background: #fffaf0;
+  border: 1px solid rgba(42, 26, 16, 0.18);
+  border-left: 5px solid var(--orange);
+  box-shadow: var(--shadow);
+}
+
+.venue-camp-icon {
+  display: grid;
+  place-items: center;
+  width: 54px;
+  height: 54px;
+  color: var(--mud-dark);
+  font-size: 1.8rem;
+  background: var(--orange-light);
+  border-radius: 50%;
+}
+
+.venue-camp-label {
+  margin: 0 0 4px;
+  color: var(--orange);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.15em;
+}
+
+.venue-camp-callout h3 {
+  margin: 0 0 8px;
+  color: var(--mud-dark);
+  font-family: "Anton", sans-serif;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 400;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.venue-camp-callout p:last-child {
+  max-width: 880px;
+  margin: 0;
+  color: #5f5345;
+}
+
+@media (max-width: 680px) {
+  .venue-camp-callout {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .venue-camp-icon {
+    width: 48px;
+    height: 48px;
+  }
+}
