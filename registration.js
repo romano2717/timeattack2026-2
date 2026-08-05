@@ -9,7 +9,7 @@ const KIDS_ADDON_PRICE = 100;
 const ADDITIONAL_TRUCK_PRICE = 200;
 const MAX_RECEIPT_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_RECEIPT_DIMENSION = 1600;
-const RECEIPT_JPEG_QUALITY = 0.82;
+const RECEIPT_JPEG_QUALITY = 0.45;
 
 const REGISTRATION_FEES = {
   Adult: {
@@ -361,7 +361,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         },
         "image/png",
-        1,
+        RECEIPT_JPEG_QUALITY,
       );
     });
   }
@@ -771,6 +771,53 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function uploadReceiptToDrive(receiptData, filename) {
+    return new Promise((resolve) => {
+      const iframeName = `mudfest-receipt-${Date.now()}`;
+
+      const iframe = document.createElement("iframe");
+      iframe.name = iframeName;
+      iframe.hidden = true;
+
+      const uploadForm = document.createElement("form");
+      uploadForm.method = "POST";
+      uploadForm.action = GOOGLE_SCRIPT_URL;
+      uploadForm.target = iframeName;
+      uploadForm.hidden = true;
+
+      const fields = {
+        action: "uploadReceipt",
+        filename,
+        mimeType: receiptData.mimeType,
+        image: receiptData.base64,
+      };
+
+      Object.entries(fields).forEach(([name, value]) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = name;
+        input.value = String(value || "");
+        uploadForm.appendChild(input);
+      });
+
+      const finish = () => {
+        setTimeout(() => {
+          uploadForm.remove();
+          iframe.remove();
+        }, 1000);
+        resolve();
+      };
+
+      iframe.addEventListener("load", finish, { once: true });
+
+      document.body.appendChild(iframe);
+      document.body.appendChild(uploadForm);
+      uploadForm.submit();
+
+      setTimeout(finish, 6000);
+    });
+  }
+
   function postToAppsScript(data) {
     return new Promise((resolve) => {
       const iframeName = `mudfest-submit-${Date.now()}`;
@@ -901,6 +948,15 @@ document.addEventListener("DOMContentLoaded", () => {
       statusText.className = "form-status success";
 
       await prepareGeneratedReceipt(submission, receipt.dataUrl);
+
+      // Upload receipt separately to Google Drive.
+      // Failure here does not cancel the registration.
+      uploadReceiptToDrive(
+        receipt,
+        `${registrationId}.jpg`,
+      ).catch((error) => {
+        console.error("Receipt backup upload failed:", error);
+      });
 
       statusText.textContent =
         `Registration ${registrationId} was submitted. ` +

@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1b160f" />
+    <meta
+      name="description"
+      content="MUDFEST official race registration form."
+    />
+    <title>MUDFEST Registration | Southside Cebu RC</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Anton&family=Montserrat:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="registration.css?v=22" />
+  </head>
+
+  <body class="registration-page">
+    <header class="registration-header">
+      <a class="brand" href="index.html" aria-label="Back to MUDFEST home">
+        <span class="brand-mark">MF</span>
+        <span>
+          <strong>MUDFEST</strong>
+          <small>SOUTHSIDE CEBU RC</small>
+        </span>
+      </a>
+
+      <a class="button button-secondary" href="index.html">
+        Back to Event Page
+      </a>
+    </header>
+
+    <main class="registration-main section-shell">
+      <section class="registration-intro">
+        <p class="eyebrow">OFFICIAL ENTRY FORM</p>
+        <h1>MUDFEST Registration</h1>
+        <p>
+          Complete the form below and upload your GCash payment receipt.
+          Registration is confirmed only after payment verification.
+        </p>
+        <p class="registration-deadline">
+          Registration closes once all available slots have been filled.
+        </p>
+      </section>
+
+      <div class="registration-layout">
+        <section class="registration-details-card">
+          <h2>Registration Details</h2>
+
+          <h3>Adult Category</h3>
+          <div class="fee-grid">
+            <article>
+              <strong>Early — ₱400 (Aug 4 - Sept 11)</strong>
+              <span>Food, event shirt, raffle entry</span>
+            </article>
+            <article>
+              <strong>Late — ₱500 (Sept 12 - Sept 15)</strong>
+              <span>Food and raffle entry; no event shirt</span>
+            </article>
+            <article>
+              <strong>Walk-in — ₱300 (Race day)</strong>
+              <span>Race entry only; no food, shirt, or raffle</span>
+            </article>
+          </div>
+
+          <h3>Kids Category</h3>
+          <p><strong>Kids Add-on — ₱100 per child</strong></p>
+          <p>
+            Includes one Kids Category race entry only. No food, event shirt, or
+            raffle entry.
+          </p>
+          <p>
+            Kids may also use Early or Late full-registration packages. Kids
+            walk-in registration is ₱100.
+          </p>
+
+          <h3>Registration Rules</h3>
+          <ul>
+            <li>One registration is valid for one RC rig only.</li>
+            <li>
+              An Adult Category rig may also be used by one child with a valid
+              Kids Category registration.
+            </li>
+            <li>
+              An Adult Category rig may only be shared once with a single Kids
+              Category participant.
+            </li>
+            <li>
+              An Adult Category rig cannot be shared by two or more adult
+              participants.
+            </li>
+            <li>All rigs are subject to technical inspection before racing.</li>
+          </ul>
+
+          <h3>Payment</h3>
+          <p>
+            Pay through GCash and upload a clear screenshot of your payment
+            receipt in the form. Use the Qr code below to pay. Please ensure
+            that the payment is made to the correct GCash account and that the
+            payment is successful before submitting your registration.
+          </p>
+          <p>GCash Number: <strong>09563386571</strong></p>
+          <p>GCash Account: <strong>DI**Y R.</strong></p>
+          <img class="gcash-qr" src="qrcode.jpg" alt="GCash payment QR code" />
+          <p>
+            Registration fees are non-refundable but may be transferred to
+            another participant with prior organizer approval.
+          </p>
+        </section>
+
+        <section class="registration-form-card" id="registrationFormCard">
+          <div
+            id="registrationTypeBadge"
+            class="registration-type-badge"
+            aria-label="Current registration phase"
+          >
+            <span id="registrationTypeBadgeLabel">EARLY</span>
+            <strong id="registrationTypeBadgeFee">₱400 ENTRY</strong>
+          </div>
+          <h2>Participant Information</h2>
+
+          <div class="registration-notice">
+            <strong>Important Notice</strong>
+            <p>
+              Please ensure that all information provided in this registration
+              form is complete, correct, and accurate. Any false information,
+              inconsistent details, duplicate registrations, invalid or
+              unreadable payment receipts, or other unusual or suspicious
+              submissions may be considered invalid and may result in the
+              cancellation of your registration without prior notice.
+            </p>
+          </div>
+
+          <form id="registration-form">
+            <div class="form-field">
+              <label for="fullName">Full Name</label>
+              <input
+                id="fullName"
+                name="fullName"
+                type="text"
+                autocomplete="name"
+                required
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="category">Category</label>
+              <select id="category" name="category" required>
+                <option value="Adult" selected>Adult</option>
+                <option value="Kid">Kid</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label for="shirtSize">T-shirt Size</label>
+              <select id="shirtSize" name="shirtSize" required>
+                <option value="">Select size</option>
+                <option value="None">No shirt / Not applicable</option>
+                <option value="Youth Small">Youth Small</option>
+                <option value="Youth Medium">Youth Medium</option>
+                <option value="Youth Large">Youth Large</option>
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="2XL">2XL</option>
+                <option value="3XL">3XL</option>
+              </select>
+            </div>
+
+            <div id="adultAddonsContainer" class="adult-addons">
+              <div class="addon-checkboxes">
+                <label class="checkbox-field">
+                  <input id="kidsAddon" name="kidsAddon" type="checkbox" />
+                  <span>Add Kids Category entry (+₱100)</span>
+                </label>
+
+                <label class="checkbox-field">
+                  <input
+                    id="additionalTruck"
+                    name="additionalTruck"
+                    type="checkbox"
+                  />
+                  <span>Additional Truck</span>
+                </label>
+              </div>
+
+              <div class="addon-number-fields">
+                <div class="form-field" id="kids-count-field" hidden>
+                  <label for="kidsCount">Number of Kids</label>
+                  <select id="kidsCount" name="kidsCount">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                  </select>
+                </div>
+
+                <div
+                  class="form-field"
+                  id="additional-truck-count-field"
+                  hidden
+                >
+                  <label for="additionalTruckCount">
+                    Number of Additional Trucks
+                  </label>
+                  <select id="additionalTruckCount" name="additionalTruckCount">
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <section class="fee-breakdown" aria-live="polite">
+              <h3>Fee Breakdown</h3>
+
+              <div class="fee-breakdown-row">
+                <span>Base registration fee</span>
+                <strong id="baseFeeDisplay">₱0</strong>
+              </div>
+
+              <div class="fee-breakdown-row">
+                <span id="kidsAddonLabel">Kids add-on</span>
+                <strong id="kidsAddonFeeDisplay">₱0</strong>
+              </div>
+
+              <div class="fee-breakdown-row">
+                <span id="additionalTruckLabel">
+                  Additional Truck
+                </span>
+                <strong id="additionalTruckFeeDisplay">₱0</strong>
+              </div>
+
+              <div class="fee-breakdown-row fee-breakdown-total">
+                <span>Total Registration Fee</span>
+                <strong id="totalFeeDisplay">₱0</strong>
+              </div>
+            </section>
+
+            <div class="form-field">
+              <label for="totalFee">Total Registration Fee</label>
+              <input
+                id="totalFee"
+                name="totalFee"
+                type="text"
+                value="₱0"
+                readonly
+                aria-readonly="true"
+                tabindex="-1"
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="paymentReceipt">GCash Payment Receipt</label>
+              <input
+                id="paymentReceipt"
+                name="paymentReceipt"
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                required
+              />
+              <small class="form-help">
+                Upload a clear JPG, PNG, or WebP screenshot, up to 5 MB.
+              </small>
+              <img
+                id="paymentReceiptPreview"
+                class="payment-receipt-preview"
+                alt="Selected GCash payment receipt preview"
+                hidden
+              />
+            </div>
+
+            <button
+              id="submit-button"
+              class="button button-primary form-submit"
+              type="submit"
+            >
+              Submit Registration
+            </button>
+
+            <p
+              id="form-status"
+              class="form-status"
+              role="status"
+              aria-live="polite"
+            ></p>
+          </form>
+        </section>
+
+        <section
+          id="generatedReceiptSection"
+          class="generated-receipt-section"
+          aria-live="polite"
+          hidden
+        >
+          <div class="generated-receipt-card">
+            <p class="eyebrow">REGISTRATION COMPLETE</p>
+            <h2>Your MUDFEST Receipt</h2>
+            <div class="receipt-save-instructions">
+              <strong>Save your registration copy</strong>
+              <p>
+                Take a screenshot of this page or save the receipt image using
+                your browser's image options. Present it during event check-in.
+              </p>
+            </div>
+
+            <img
+              id="generatedReceiptPreview"
+              class="generated-receipt-preview"
+              alt="Generated MUDFEST registration receipt"
+            />
+
+            <div class="generated-receipt-actions">
+              <button
+                id="registerAnotherButton"
+                class="button register-another-button"
+                type="button"
+              >
+                Register Another Participant
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="registration.js?v=26"></script>
+  </body>
+</html>
