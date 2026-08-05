@@ -9,7 +9,7 @@ const KIDS_ADDON_PRICE = 100;
 const ADDITIONAL_TRUCK_PRICE = 200;
 const MAX_RECEIPT_FILE_SIZE = 5 * 1024 * 1024;
 const MAX_RECEIPT_DIMENSION = 1600;
-const RECEIPT_JPEG_QUALITY = 0.82;
+const RECEIPT_JPEG_QUALITY = 0.75;
 
 const REGISTRATION_FEES = {
   Adult: {
@@ -361,7 +361,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         },
         "image/png",
-        1,
+        RECEIPT_JPEG_QUALITY,
       );
     });
   }
