@@ -3,7 +3,7 @@ const GOOGLE_SCRIPT_URL =
 
 // Change this value when the registration period changes:
 // "Early", "Late", or "Walk-in"
-const REGISTRATION_TYPE = "Early";
+const REGISTRATION_TYPE = "Late";
 
 const KIDS_ADDON_PRICE = 100;
 const ADDITIONAL_TRUCK_PRICE = 200;
