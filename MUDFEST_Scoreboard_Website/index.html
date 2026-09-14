@@ -1,0 +1,1567 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>MUDFEST Scoreboard</title>
+
+    <style>
+      :root {
+        --background: #f4efe4;
+        --panel: #fffaf0;
+        --text: #1f1d18;
+        --muted: #6f685d;
+        --border: #d8cfbf;
+        --accent: #b9682b;
+        --danger: #a13d33;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background: var(--background);
+        color: var(--text);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+        margin-bottom: 24px;
+      }
+
+      h1 {
+        margin: 0;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        padding: 10px 14px;
+        border: none;
+        border-radius: 8px;
+        background: var(--text);
+        color: white;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        background: #ded5c7;
+        color: var(--text);
+      }
+
+      button.danger {
+        background: var(--danger);
+      }
+
+      .category {
+        display: block;
+        margin-bottom: 28px;
+      }
+
+      .category-heading {
+        margin: 0 0 10px;
+        font-size: 24px;
+      }
+
+      .panel {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        overflow: hidden;
+      }
+
+      .entry-form {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr 1fr 1fr auto;
+        gap: 10px;
+        padding: 16px;
+        align-items: end;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .kids-form {
+        grid-template-columns: 2fr 1fr 1fr 1fr auto;
+      }
+
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: bold;
+        text-transform: uppercase;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        background: white;
+        font-size: 15px;
+      }
+
+      .instructions {
+        padding: 12px 16px;
+        color: var(--muted);
+        font-size: 13px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .table-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+        padding: 12px 16px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .sort-control {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .sort-control label {
+        margin: 0;
+      }
+
+      .table-container {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 800px;
+      }
+
+      th,
+      td {
+        padding: 12px;
+        text-align: left;
+        border-bottom: 1px solid var(--border);
+      }
+
+      th {
+        background: #eee5d7;
+        color: var(--muted);
+        font-size: 12px;
+        text-transform: uppercase;
+      }
+
+      .status-dnf,
+      .status-dq {
+        opacity: 0.65;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: bold;
+      }
+
+      .status-ok {
+        background: #e1eee2;
+        color: #315a39;
+      }
+
+      .status-dnf,
+      .status-dq {
+        background: #f0dcda;
+        color: var(--danger);
+      }
+
+      .actions {
+        display: flex;
+        gap: 6px;
+      }
+
+      .actions button {
+        padding: 6px 9px;
+        font-size: 12px;
+      }
+
+      .empty-message {
+        padding: 30px;
+        text-align: center;
+        color: var(--muted);
+      }
+
+      @media (max-width: 900px) {
+        .entry-form,
+        .kids-form {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 12px;
+        }
+
+        .entry-form,
+        .kids-form {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      /* ------------------------------------------------------------
+           Sticky scoreboard table headers
+           ------------------------------------------------------------ */
+
+      thead th {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      /*
+         * Give sticky header cells an opaque background so table rows
+         * do not show through while scrolling.
+         */
+      thead th {
+        background: var(--panel);
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <header>
+        <div>
+          <h1>MUDFEST Scoreboard</h1>
+          <div>Time Attack Race • Class 2 Pro-Stock & Kids Category</div>
+        </div>
+
+        <div class="header-actions">
+          <button id="populateRandomButton" class="secondary">
+            Populate Random Data
+          </button>
+
+          <button id="exportButton">Export to Excel</button>
+
+          <button id="clearButton" class="danger">Clear All Data</button>
+        </div>
+      </header>
+
+      <!-- Adult / Class 2 Pro-Stock -->
+      <section id="adultCategory" class="category">
+        <h2 class="category-heading">
+          Class 2 Pro-Stock
+          <small style="font-size: 14px; color: var(--muted)">
+            — 15-minute time limit
+          </small>
+        </h2>
+
+        <div class="panel">
+          <form id="adultForm" class="entry-form">
+            <div>
+              <label for="adultName">Driver Name</label>
+              <input
+                id="adultName"
+                type="text"
+                placeholder="Driver name"
+                required
+              />
+            </div>
+
+            <div>
+              <label for="adultBestTime">Best Time (MM:SS)</label>
+              <input
+                id="adultBestTime"
+                type="text"
+                placeholder="1:23"
+                value="1:23"
+              />
+            </div>
+
+            <div>
+              <label for="adultPenalty">Penalties (MM:SS)</label>
+              <input
+                id="adultPenalty"
+                type="text"
+                inputmode="numeric"
+                placeholder="0:00"
+                value="0:00"
+              />
+            </div>
+
+            <div>
+              <label for="adultScalePoints">Scale Points (Max 10)</label>
+              <input
+                id="adultScalePoints"
+                type="number"
+                min="0"
+                max="10"
+                step="0.01"
+                value="0"
+              />
+            </div>
+
+            <div>
+              <label for="adultStatus">Status</label>
+              <select id="adultStatus">
+                <option value="OK">Finished</option>
+                <option value="DNF">DNF</option>
+                <option value="DQ">DQ</option>
+              </select>
+            </div>
+
+            <button type="submit">Add Driver</button>
+          </form>
+
+          <div class="instructions">
+            Time limit: 15 minutes. Best Time and Penalties use MM:SS only.
+            Final Time = Best Time + Penalties. DNF and DQ are treated as
+            infinite time and are always placed at the bottom.
+          </div>
+
+          <div class="table-toolbar">
+            <strong id="adultDriverCount">0 drivers</strong>
+
+            <div class="sort-control">
+              <label for="adultSort">Sort By</label>
+
+              <select id="adultSort">
+                <option value="fastestTime">Fastest Time</option>
+
+                <option value="fastestTimeLowPenalty">Cleanest Run</option>
+
+                <option value="lowestPenalty">Lowest Penalty</option>
+
+                <option value="highestScalePoints">Highest Scale Points</option>
+
+                <option value="slowestTime">Slowest Time</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Best Time</th>
+                  <th>Penalties</th>
+                  <th>Scale Points</th>
+                  <th>Final Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="adultTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- Kids -->
+      <section id="kidsCategory" class="category">
+        <h2 class="category-heading">
+          Kids Category
+          <small style="font-size: 14px; color: var(--muted)">
+            — 5-minute time limit
+          </small>
+        </h2>
+
+        <div class="panel">
+          <form id="kidsForm" class="entry-form kids-form">
+            <div>
+              <label for="kidsName">Driver Name</label>
+              <input
+                id="kidsName"
+                type="text"
+                placeholder="Driver name"
+                required
+              />
+            </div>
+
+            <div>
+              <label for="kidsBestTime">Best Time (MM:SS)</label>
+              <input id="kidsBestTime" type="text" placeholder="1:23" />
+            </div>
+
+            <div>
+              <label for="kidsPenalty">Penalties (MM:SS)</label>
+              <input
+                id="kidsPenalty"
+                type="text"
+                inputmode="numeric"
+                placeholder="0:00"
+                value="0:00"
+              />
+            </div>
+
+            <div>
+              <label for="kidsStatus">Status</label>
+              <select id="kidsStatus">
+                <option value="OK">Finished</option>
+                <option value="DNF">DNF</option>
+                <option value="DQ">DQ</option>
+              </select>
+            </div>
+
+            <button type="submit">Add Driver</button>
+          </form>
+
+          <div class="instructions">
+            Time limit: 5 minutes. Best Time and Penalties use MM:SS only. Final
+            Time = Best Time + Penalties. DNF and DQ are treated as infinite
+            time and are always placed at the bottom.
+          </div>
+
+          <div class="table-toolbar">
+            <strong id="kidsDriverCount">0 drivers</strong>
+
+            <div class="sort-control">
+              <label for="kidsSort">Sort By</label>
+
+              <select id="kidsSort">
+                <option value="fastestTime">Fastest Time</option>
+
+                <option value="fastestTimeLowPenalty">Cleanest Run</option>
+
+                <option value="lowestPenalty">Lowest Penalty</option>
+
+                <option value="slowestTime">Slowest Time</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Name</th>
+                  <th>Best Time</th>
+                  <th>Penalties</th>
+                  <th>Final Time</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="kidsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const STORAGE_KEY = "mudfest_scoreboard_v1";
+
+      const ADULT_TIME_LIMIT_SECONDS = 15 * 60;
+      const KIDS_TIME_LIMIT_SECONDS = 5 * 60;
+
+      const scoreboard = loadScoreboard();
+
+      // ------------------------------------------------------------
+      // Local storage
+      // ------------------------------------------------------------
+
+      function loadScoreboard() {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+
+        if (!savedData) {
+          return {
+            adult: [],
+            kids: [],
+          };
+        }
+
+        try {
+          return JSON.parse(savedData);
+        } catch (error) {
+          console.error("Unable to read saved scoreboard:", error);
+
+          return {
+            adult: [],
+            kids: [],
+          };
+        }
+      }
+
+      function saveScoreboard() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(scoreboard));
+      }
+
+      // ------------------------------------------------------------
+      // Time helpers
+      // ------------------------------------------------------------
+
+      function parseTime(value) {
+        const input = String(value || "").trim();
+
+        if (!input) {
+          return null;
+        }
+
+        // Only allow Minutes:Seconds.
+        //
+        // Valid:
+        // 0:05
+        // 1:23
+        // 14:59
+        //
+        // Invalid:
+        // 83
+        // 1:23.500
+        // 1:75
+        const match = input.match(/^(\d+):([0-5]\d)$/);
+
+        if (!match) {
+          return null;
+        }
+
+        const minutes = Number(match[1]);
+        const seconds = Number(match[2]);
+
+        return minutes * 60 + seconds;
+      }
+
+      function formatTime(totalSeconds) {
+        if (!Number.isFinite(totalSeconds)) {
+          return "∞";
+        }
+
+        // Times are displayed as whole Minutes:Seconds only.
+        const roundedSeconds = Math.round(totalSeconds);
+
+        const minutes = Math.floor(roundedSeconds / 60);
+
+        const seconds = roundedSeconds - minutes * 60;
+
+        return minutes + ":" + String(seconds).padStart(2, "0");
+      }
+
+      function parsePenalty(value) {
+        return parseTime(value);
+      }
+
+      function getCategoryTimeLimit(category) {
+        if (category === "adult") {
+          return ADULT_TIME_LIMIT_SECONDS;
+        }
+
+        return KIDS_TIME_LIMIT_SECONDS;
+      }
+
+      function getStoredSeconds(value) {
+        if (typeof value === "number") {
+          return Number.isFinite(value) ? value : null;
+        }
+
+        if (typeof value === "string") {
+          const trimmedValue = value.trim();
+
+          // Support old/localStorage values that may already be
+          // stored as Minutes:Seconds text.
+          if (trimmedValue.includes(":")) {
+            return parseTime(trimmedValue);
+          }
+
+          const numericValue = Number(trimmedValue);
+
+          return Number.isFinite(numericValue) ? numericValue : null;
+        }
+
+        return null;
+      }
+
+      function getFinalTime(driver) {
+        if (driver.status === "DNF" || driver.status === "DQ") {
+          return Infinity;
+        }
+
+        const bestTime = getStoredSeconds(driver.bestTime);
+
+        const penalty = getStoredSeconds(driver.penalty);
+
+        if (bestTime === null) {
+          return Infinity;
+        }
+
+        return bestTime + (penalty === null ? 0 : penalty);
+      }
+
+      function formatScalePoints(value) {
+        const points = Number(value);
+
+        if (!Number.isFinite(points)) {
+          return "0";
+        }
+
+        return points.toString();
+      }
+
+      // ------------------------------------------------------------
+      // Driver helpers
+      // ------------------------------------------------------------
+
+      function createDriverId() {
+        return (
+          Date.now().toString(36) + Math.random().toString(36).substring(2, 8)
+        );
+      }
+
+      function sortDrivers(drivers, sortMode, isAdult) {
+        return [...drivers].sort(function (driverA, driverB) {
+          const finalTimeA = getFinalTime(driverA);
+
+          const finalTimeB = getFinalTime(driverB);
+
+          const penaltyA = getStoredSeconds(driverA.penalty) ?? 0;
+
+          const penaltyB = getStoredSeconds(driverB.penalty) ?? 0;
+
+          const bestTimeA = getStoredSeconds(driverA.bestTime) ?? Infinity;
+
+          const bestTimeB = getStoredSeconds(driverB.bestTime) ?? Infinity;
+
+          const driverAIsDNFOrDQ = !Number.isFinite(finalTimeA);
+
+          const driverBIsDNFOrDQ = !Number.isFinite(finalTimeB);
+
+          // DNF and DQ always stay at the bottom.
+          if (driverAIsDNFOrDQ !== driverBIsDNFOrDQ) {
+            return driverAIsDNFOrDQ ? 1 : -1;
+          }
+
+          if (driverAIsDNFOrDQ && driverBIsDNFOrDQ) {
+            if (driverA.status !== driverB.status) {
+              return driverA.status === "DNF" ? -1 : 1;
+            }
+
+            return driverA.name.localeCompare(driverB.name);
+          }
+
+          if (sortMode === "fastestTime") {
+            return finalTimeA - finalTimeB;
+          }
+
+          if (sortMode === "fastestTimeLowPenalty") {
+            /*
+             * CLEANEST RUN ranking:
+             *
+             * 1. Lowest PENALTY
+             * 2. Fastest FINAL TIME when penalties are tied
+             * 3. Fastest BEST TIME when both above are tied
+             *
+             * This makes the cleanest run primarily about
+             * deductions/penalties, with speed used as the
+             * tie-breaker.
+             */
+            if (penaltyA !== penaltyB) {
+              return penaltyA - penaltyB;
+            }
+
+            if (finalTimeA !== finalTimeB) {
+              return finalTimeA - finalTimeB;
+            }
+
+            return bestTimeA - bestTimeB;
+          }
+
+          if (sortMode === "lowestPenalty") {
+            if (penaltyA !== penaltyB) {
+              return penaltyA - penaltyB;
+            }
+
+            return finalTimeA - finalTimeB;
+          }
+
+          if (sortMode === "highestScalePoints" && isAdult) {
+            const scalePointDifference =
+              Number(driverB.scalePoints || 0) -
+              Number(driverA.scalePoints || 0);
+
+            if (scalePointDifference !== 0) {
+              return scalePointDifference;
+            }
+
+            return finalTimeA - finalTimeB;
+          }
+
+          if (sortMode === "slowestTime") {
+            return finalTimeB - finalTimeA;
+          }
+
+          return finalTimeA - finalTimeB;
+        });
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (character) {
+          const characters = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;",
+          };
+
+          return characters[character];
+        });
+      }
+
+      // ------------------------------------------------------------
+      // Rendering
+      // ------------------------------------------------------------
+
+      function renderCategory(category) {
+        const isAdult = category === "adult";
+
+        const tableBody = document.getElementById(category + "TableBody");
+
+        const sortMode = document.getElementById(category + "Sort").value;
+
+        const drivers = sortDrivers(scoreboard[category], sortMode, isAdult);
+
+        const driverCount = document.getElementById(category + "DriverCount");
+
+        driverCount.textContent =
+          drivers.length + (drivers.length === 1 ? " driver" : " drivers");
+
+        if (drivers.length === 0) {
+          tableBody.innerHTML =
+            "<tr>" +
+            '<td class="empty-message" colspan="' +
+            (isAdult ? 8 : 7) +
+            '">' +
+            "No drivers added yet." +
+            "</td>" +
+            "</tr>";
+
+          return;
+        }
+
+        tableBody.innerHTML = drivers
+          .map(function (driver, index) {
+            const finalTime = getFinalTime(driver);
+
+            let displayedFinalTime;
+
+            if (driver.status === "OK") {
+              displayedFinalTime = formatTime(finalTime);
+            } else {
+              displayedFinalTime = driver.status;
+            }
+
+            const scalePointsColumn = isAdult
+              ? "<td>" + Number(driver.scalePoints || 0) + "</td>"
+              : "";
+
+            return (
+              '<tr class="status-' +
+              driver.status.toLowerCase() +
+              '">' +
+              "<td>" +
+              (index + 1) +
+              "</td>" +
+              "<td>" +
+              "<strong>" +
+              escapeHtml(driver.name) +
+              "</strong>" +
+              "</td>" +
+              "<td>" +
+              (Number.isFinite(driver.bestTime)
+                ? formatTime(driver.bestTime)
+                : "—") +
+              "</td>" +
+              "<td>" +
+              formatTime(getStoredSeconds(driver.penalty) ?? 0) +
+              "</td>" +
+              scalePointsColumn +
+              "<td>" +
+              displayedFinalTime +
+              "</td>" +
+              "<td>" +
+              '<span class="status-badge status-' +
+              driver.status.toLowerCase() +
+              '">' +
+              driver.status +
+              "</span>" +
+              "</td>" +
+              "<td>" +
+              '<div class="actions">' +
+              "<button " +
+              'type="button" ' +
+              'class="secondary" ' +
+              'data-edit-category="' +
+              category +
+              '" ' +
+              'data-edit-id="' +
+              driver.id +
+              '">' +
+              "Edit" +
+              "</button>" +
+              "<button " +
+              'type="button" ' +
+              'class="danger" ' +
+              'data-delete-category="' +
+              category +
+              '" ' +
+              'data-delete-id="' +
+              driver.id +
+              '">' +
+              "Delete" +
+              "</button>" +
+              "</div>" +
+              "</td>" +
+              "</tr>"
+            );
+          })
+          .join("");
+      }
+
+      function renderAllCategories() {
+        renderCategory("adult");
+        renderCategory("kids");
+      }
+
+      // ------------------------------------------------------------
+      // Adding drivers
+      // ------------------------------------------------------------
+
+      function addDriver(category) {
+        const isAdult = category === "adult";
+
+        const nameInput = document.getElementById(category + "Name");
+
+        const bestTimeInput = document.getElementById(category + "BestTime");
+
+        const penaltyInput = document.getElementById(category + "Penalty");
+
+        const statusInput = document.getElementById(category + "Status");
+
+        const name = nameInput.value.trim();
+
+        const status = statusInput.value;
+
+        const bestTime = parseTime(bestTimeInput.value);
+
+        const penalty = parsePenalty(penaltyInput.value);
+
+        let scalePoints = 0;
+
+        if (isAdult) {
+          scalePoints =
+            Number(document.getElementById("adultScalePoints").value) || 0;
+        }
+
+        if (!name) {
+          alert("Please enter the driver's name.");
+          return;
+        }
+
+        if (status === "OK" && bestTime === null) {
+          alert(
+            "Please enter a valid best time using " +
+              "Minutes:Seconds only, for example 1:23.",
+          );
+
+          return;
+        }
+
+        if (penalty === null) {
+          alert(
+            "Please enter the penalty in Minutes:Seconds format, " +
+              "for example 0:05 or 1:30.",
+          );
+
+          return;
+        }
+
+        const timeLimit = getCategoryTimeLimit(category);
+
+        if (status === "OK" && bestTime > timeLimit) {
+          alert(
+            category === "adult"
+              ? "Adult category has a 15-minute time limit."
+              : "Kids category has a 5-minute time limit.",
+          );
+
+          return;
+        }
+
+        if (category === "adult" && (scalePoints < 0 || scalePoints > 10)) {
+          alert("Scale Points must be between 0 and 10.");
+
+          return;
+        }
+
+        const driver = {
+          id: createDriverId(),
+          name: name,
+          bestTime: bestTime,
+          penalty: penalty,
+          scalePoints: scalePoints,
+          status: status,
+        };
+
+        scoreboard[category].push(driver);
+
+        saveScoreboard();
+
+        document.getElementById(category + "Form").reset();
+
+        // Restore numeric defaults after reset.
+        document.getElementById(category + "Penalty").value = "0:00";
+
+        if (isAdult) {
+          document.getElementById("adultScalePoints").value = 0;
+        }
+
+        renderCategory(category);
+      }
+
+      // ------------------------------------------------------------
+      // Editing drivers
+      // ------------------------------------------------------------
+
+      function editDriver(category, driverId) {
+        const driver = scoreboard[category].find(function (item) {
+          return item.id === driverId;
+        });
+
+        if (!driver) {
+          return;
+        }
+
+        const updatedName = prompt("Driver name:", driver.name);
+
+        if (updatedName === null) {
+          return;
+        }
+
+        let updatedStatus = prompt("Status: OK, DNF, or DQ", driver.status);
+
+        if (updatedStatus === null) {
+          return;
+        }
+
+        updatedStatus = updatedStatus.trim().toUpperCase();
+
+        if (!["OK", "DNF", "DQ"].includes(updatedStatus)) {
+          alert("Status must be OK, DNF, or DQ.");
+          return;
+        }
+
+        let updatedBestTime = driver.bestTime;
+
+        if (updatedStatus === "OK") {
+          const currentTime = Number.isFinite(driver.bestTime)
+            ? formatTime(driver.bestTime)
+            : "";
+
+          const enteredTime = prompt(
+            "Best time (Minutes:Seconds):",
+            currentTime,
+          );
+
+          if (enteredTime === null) {
+            return;
+          }
+
+          updatedBestTime = parseTime(enteredTime);
+
+          if (updatedBestTime === null) {
+            alert("Invalid time.");
+            return;
+          }
+
+          const timeLimit = getCategoryTimeLimit(category);
+
+          if (updatedBestTime > timeLimit) {
+            alert(
+              category === "adult"
+                ? "Adult category has a 15-minute time limit."
+                : "Kids category has a 5-minute time limit.",
+            );
+
+            return;
+          }
+        }
+
+        const enteredPenalty = prompt(
+          "Penalty (Minutes:Seconds):",
+          formatTime(driver.penalty),
+        );
+
+        if (enteredPenalty === null) {
+          return;
+        }
+
+        const updatedPenalty = parsePenalty(enteredPenalty);
+
+        if (updatedPenalty === null) {
+          alert(
+            "Invalid penalty. Use Minutes:Seconds only, " +
+              "for example 0:05 or 1:30.",
+          );
+
+          return;
+        }
+
+        let updatedScalePoints = driver.scalePoints || 0;
+
+        if (category === "adult") {
+          const enteredScalePoints = prompt(
+            "Scale points:",
+            updatedScalePoints,
+          );
+
+          if (enteredScalePoints === null) {
+            return;
+          }
+
+          updatedScalePoints = Number(enteredScalePoints) || 0;
+        }
+
+        driver.name = updatedName.trim() || driver.name;
+
+        driver.status = updatedStatus;
+
+        driver.bestTime = updatedBestTime;
+
+        driver.penalty = updatedPenalty;
+
+        driver.scalePoints = updatedScalePoints;
+
+        saveScoreboard();
+
+        renderCategory(category);
+      }
+
+      // ------------------------------------------------------------
+      // Deleting drivers
+      // ------------------------------------------------------------
+
+      function deleteDriver(category, driverId) {
+        const driver = scoreboard[category].find(function (item) {
+          return item.id === driverId;
+        });
+
+        if (!driver) {
+          return;
+        }
+
+        const confirmed = confirm("Delete " + driver.name + "?");
+
+        if (!confirmed) {
+          return;
+        }
+
+        scoreboard[category] = scoreboard[category].filter(function (item) {
+          return item.id !== driverId;
+        });
+
+        saveScoreboard();
+
+        renderCategory(category);
+      }
+
+      // ------------------------------------------------------------
+      // Excel export
+      // ------------------------------------------------------------
+
+      function escapeXml(value) {
+        return String(value ?? "").replace(/[<>&'"]/g, function (character) {
+          const characters = {
+            "<": "&lt;",
+            ">": "&gt;",
+            "&": "&amp;",
+            "'": "&apos;",
+            '"': "&quot;",
+          };
+
+          return characters[character];
+        });
+      }
+
+      function createWorksheetXml(worksheetName, rows) {
+        const rowsXml = rows
+          .map(function (row) {
+            const cellsXml = row
+              .map(function (cell) {
+                return (
+                  "<Cell>" +
+                  '<Data ss:Type="String">' +
+                  escapeXml(cell) +
+                  "</Data>" +
+                  "</Cell>"
+                );
+              })
+              .join("");
+
+            return "<Row>" + cellsXml + "</Row>";
+          })
+          .join("");
+
+        return (
+          '<Worksheet ss:Name="' +
+          escapeXml(worksheetName) +
+          '">' +
+          "<Table>" +
+          rowsXml +
+          "</Table>" +
+          "</Worksheet>"
+        );
+      }
+
+      function createAdultExportRows(sortMode) {
+        const rows = [
+          [
+            "Name",
+            "Best Time",
+            "Penalties",
+            "Scale Points",
+            "Final Time",
+            "Status",
+          ],
+        ];
+
+        const sortedDrivers = sortDrivers(scoreboard.adult, sortMode, true);
+
+        sortedDrivers.forEach(function (driver) {
+          const storedBestTime = getStoredSeconds(driver.bestTime);
+
+          rows.push([
+            driver.name,
+
+            storedBestTime !== null ? formatTime(storedBestTime) : "",
+
+            formatTime(getStoredSeconds(driver.penalty) ?? 0),
+
+            driver.scalePoints || 0,
+
+            driver.status === "OK"
+              ? formatTime(getFinalTime(driver))
+              : driver.status,
+
+            driver.status,
+          ]);
+        });
+
+        return rows;
+      }
+
+      function createKidsExportRows(sortMode) {
+        const rows = [
+          ["Name", "Best Time", "Penalties", "Final Time", "Status"],
+        ];
+
+        const sortedDrivers = sortDrivers(scoreboard.kids, sortMode, false);
+
+        sortedDrivers.forEach(function (driver) {
+          const storedBestTime = getStoredSeconds(driver.bestTime);
+
+          rows.push([
+            driver.name,
+
+            storedBestTime !== null ? formatTime(storedBestTime) : "",
+
+            formatTime(getStoredSeconds(driver.penalty) ?? 0),
+
+            driver.status === "OK"
+              ? formatTime(getFinalTime(driver))
+              : driver.status,
+
+            driver.status,
+          ]);
+        });
+
+        return rows;
+      }
+
+      function exportToExcel() {
+        const worksheets = [];
+
+        const adultSortingSheets = [
+          {
+            name: "Adult - Fastest Time",
+            sortMode: "fastestTime",
+          },
+          {
+            name: "Adult - Cleanest Run",
+            sortMode: "fastestTimeLowPenalty",
+          },
+          {
+            name: "Adult - Lowest Penalty",
+            sortMode: "lowestPenalty",
+          },
+          {
+            name: "Adult - Highest Scale Points",
+            sortMode: "highestScalePoints",
+          },
+          {
+            name: "Adult - Slowest Time",
+            sortMode: "slowestTime",
+          },
+        ];
+
+        const kidsSortingSheets = [
+          {
+            name: "Kids - Fastest Time",
+            sortMode: "fastestTime",
+          },
+          {
+            name: "Kids - Cleanest Run",
+            sortMode: "fastestTimeLowPenalty",
+          },
+          {
+            name: "Kids - Lowest Penalty",
+            sortMode: "lowestPenalty",
+          },
+          {
+            name: "Kids - Slowest Time",
+            sortMode: "slowestTime",
+          },
+        ];
+
+        adultSortingSheets.forEach(function (sheet) {
+          worksheets.push(
+            createWorksheetXml(
+              sheet.name,
+              createAdultExportRows(sheet.sortMode),
+            ),
+          );
+        });
+
+        kidsSortingSheets.forEach(function (sheet) {
+          worksheets.push(
+            createWorksheetXml(
+              sheet.name,
+              createKidsExportRows(sheet.sortMode),
+            ),
+          );
+        });
+
+        const workbookXml =
+          '<?xml version="1.0"?>' +
+          '<?mso-application progid="Excel.Sheet"?>' +
+          "<Workbook " +
+          'xmlns="urn:schemas-microsoft-com:office:spreadsheet" ' +
+          'xmlns:ss="urn:schemas-microsoft-com:office:spreadsheet">' +
+          worksheets.join("") +
+          "</Workbook>";
+
+        const excelFile = new Blob([workbookXml], {
+          type: "application/vnd.ms-excel",
+        });
+
+        const downloadLink = document.createElement("a");
+
+        downloadLink.href = URL.createObjectURL(excelFile);
+
+        downloadLink.download =
+          "MUDFEST_Scoreboard_" +
+          new Date().toISOString().slice(0, 10) +
+          ".xls";
+
+        document.body.appendChild(downloadLink);
+
+        downloadLink.click();
+
+        document.body.removeChild(downloadLink);
+
+        URL.revokeObjectURL(downloadLink.href);
+      }
+
+      // ------------------------------------------------------------
+      // Random test data
+      // ------------------------------------------------------------
+
+      function randomNumber(minimum, maximum) {
+        return Math.random() * (maximum - minimum) + minimum;
+      }
+
+      function randomInteger(minimum, maximum) {
+        return Math.floor(randomNumber(minimum, maximum + 1));
+      }
+
+      function randomItem(items) {
+        return items[randomInteger(0, items.length - 1)];
+      }
+
+      function createRandomDriverName(category, index) {
+        const firstNames = [
+          "Alex",
+          "Ben",
+          "Carlo",
+          "Daniel",
+          "Ethan",
+          "Francis",
+          "Gabriel",
+          "Harvey",
+          "Ivan",
+          "James",
+          "Ken",
+          "Lance",
+          "Marco",
+          "Nathan",
+          "Oliver",
+          "Paolo",
+          "Rafael",
+          "Sean",
+          "Tristan",
+          "Victor",
+          "Aaron",
+          "Bryan",
+          "Cedric",
+          "Dylan",
+          "Enzo",
+          "Felix",
+          "Gio",
+          "Hugo",
+          "Ian",
+          "Jared",
+        ];
+
+        const lastNames = [
+          "Santos",
+          "Reyes",
+          "Cruz",
+          "Garcia",
+          "Mendoza",
+          "Flores",
+          "Ramos",
+          "Torres",
+          "Navarro",
+          "Castillo",
+          "Aquino",
+          "Rivera",
+          "Diaz",
+          "Lim",
+          "Tan",
+          "Sy",
+          "Go",
+          "Villanueva",
+          "Domingo",
+          "Mercado",
+        ];
+
+        const prefix = category === "adult" ? "A" : "K";
+
+        return (
+          randomItem(firstNames) +
+          " " +
+          randomItem(lastNames) +
+          " " +
+          prefix +
+          String(index + 1).padStart(2, "0")
+        );
+      }
+
+      function createRandomDriver(category, index, status) {
+        const isAdult = category === "adult";
+
+        // Generate valid track times within each category limit.
+        // Adults: 1:00 up to 14:59.
+        // Kids:   0:30 up to 4:59.
+        const maximumRandomTime = isAdult
+          ? ADULT_TIME_LIMIT_SECONDS - 1
+          : KIDS_TIME_LIMIT_SECONDS - 1;
+
+        const minimumRandomTime = isAdult ? 60 : 30;
+
+        const bestTime = randomInteger(minimumRandomTime, maximumRandomTime);
+
+        // Penalties are generated as whole seconds so they
+        // always display cleanly as Minutes:Seconds.
+        const penalty = randomInteger(0, 90);
+
+        // Adult scale points support decimals.
+        const scalePoints = isAdult
+          ? Number(randomNumber(0, 10).toFixed(2))
+          : 0;
+
+        return {
+          id: createDriverId(),
+
+          name: createRandomDriverName(category, index),
+
+          bestTime: bestTime,
+
+          penalty: penalty,
+
+          scalePoints: scalePoints,
+
+          status: status,
+        };
+      }
+
+      function populateRandomData() {
+        const hasExistingData =
+          scoreboard.adult.length > 0 || scoreboard.kids.length > 0;
+
+        if (hasExistingData) {
+          const confirmed = confirm(
+            "This will replace the current scoreboard " +
+              "with 50 random Adult drivers and " +
+              "10 random Kids drivers. Continue?",
+          );
+
+          if (!confirmed) {
+            return;
+          }
+        }
+
+        scoreboard.adult = [];
+        scoreboard.kids = [];
+
+        // Adult:
+        // 45 finished, 3 DNF, 2 DQ = 50 total.
+        for (let index = 0; index < 50; index++) {
+          let status = "OK";
+
+          if (index >= 45 && index < 48) {
+            status = "DNF";
+          }
+
+          if (index >= 48) {
+            status = "DQ";
+          }
+
+          scoreboard.adult.push(createRandomDriver("adult", index, status));
+        }
+
+        // Kids:
+        // 8 finished, 1 DNF, 1 DQ = 10 total.
+        for (let index = 0; index < 10; index++) {
+          let status = "OK";
+
+          if (index === 8) {
+            status = "DNF";
+          }
+
+          if (index === 9) {
+            status = "DQ";
+          }
+
+          scoreboard.kids.push(createRandomDriver("kids", index, status));
+        }
+
+        saveScoreboard();
+
+        renderAllCategories();
+      }
+
+      // ------------------------------------------------------------
+      // Event listeners
+      // ------------------------------------------------------------
+
+      document
+        .getElementById("adultForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          addDriver("adult");
+        });
+
+      document
+        .getElementById("kidsForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          addDriver("kids");
+        });
+
+      document
+        .getElementById("adultSort")
+        .addEventListener("change", function () {
+          renderCategory("adult");
+        });
+
+      document
+        .getElementById("kidsSort")
+        .addEventListener("change", function () {
+          renderCategory("kids");
+        });
+
+      document.addEventListener("click", function (event) {
+        const editButton = event.target.closest("[data-edit-id]");
+
+        if (editButton) {
+          editDriver(
+            editButton.dataset.editCategory,
+            editButton.dataset.editId,
+          );
+
+          return;
+        }
+
+        const deleteButton = event.target.closest("[data-delete-id]");
+
+        if (deleteButton) {
+          deleteDriver(
+            deleteButton.dataset.deleteCategory,
+            deleteButton.dataset.deleteId,
+          );
+        }
+      });
+
+      document
+        .getElementById("populateRandomButton")
+        .addEventListener("click", populateRandomData);
+
+      document
+        .getElementById("exportButton")
+        .addEventListener("click", exportToExcel);
+
+      document
+        .getElementById("clearButton")
+        .addEventListener("click", function () {
+          const confirmed = confirm(
+            "Clear all Adult and Kids scoreboard data?",
+          );
+
+          if (!confirmed) {
+            return;
+          }
+
+          scoreboard.adult = [];
+          scoreboard.kids = [];
+
+          saveScoreboard();
+
+          renderAllCategories();
+        });
+
+      // ------------------------------------------------------------
+      // Initial page render
+      // ------------------------------------------------------------
+
+      renderAllCategories();
+    </script>
+  </body>
+</html>
