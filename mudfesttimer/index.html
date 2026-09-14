@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <title>MUDFEST Driver Timer</title>
+
+    <!-- PWA / iPhone installation support -->
+    <meta name="theme-color" content="#151515">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="MUDFEST Timer">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="manifest" href="./manifest.webmanifest">
+    <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+
+
+    <style>
+        :root {
+            --background: #151515;
+            --panel: #202020;
+            --panel-light: #2a2a2a;
+            --text: #f5efe2;
+            --muted: #b8b09f;
+            --accent: #e87924;
+            --success: #6cc070;
+            --danger: #dc5b52;
+            --warning: #efb64a;
+            --border: #3b3b3b;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            background: var(--background);
+            color: var(--text);
+            font-family:
+                -apple-system,
+                BlinkMacSystemFont,
+                "Segoe UI",
+                Roboto,
+                Helvetica,
+                Arial,
+                sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding:
+                max(16px, env(safe-area-inset-top))
+                max(16px, env(safe-area-inset-right))
+                max(20px, env(safe-area-inset-bottom))
+                max(16px, env(safe-area-inset-left));
+        }
+
+        button {
+            font: inherit;
+        }
+
+        .app {
+            width: min(100%, 760px);
+            margin: 0 auto;
+        }
+
+        .header {
+            margin-bottom: 18px;
+            text-align: center;
+        }
+
+        .eyebrow {
+            margin: 0 0 6px;
+            color: var(--accent);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.14em;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(28px, 6vw, 42px);
+            line-height: 1.05;
+        }
+
+        .limit-note {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .timer-card {
+            position: relative;
+            padding: clamp(18px, 4vw, 30px);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            background: linear-gradient(180deg, #242424 0%, #1d1d1d 100%);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.28);
+        }
+
+        .status-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-right: 62px;
+        }
+
+        .started-at-label {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1.3;
+        }
+
+        .status-info {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            min-width: 0;
+        }
+
+        .started-at-label {
+            display: block;
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1.3;
+            white-space: nowrap;
+        }
+
+        .status-label {
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 32px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            background: var(--panel-light);
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.04em;
+        }
+
+        .status-badge.running {
+            background: rgba(108, 192, 112, 0.14);
+            color: var(--success);
+        }
+
+        .status-badge.paused {
+            background: rgba(239, 182, 74, 0.14);
+            color: var(--warning);
+        }
+
+        .status-badge.stopped {
+            background: rgba(232, 121, 36, 0.14);
+            color: var(--accent);
+        }
+
+        .status-badge.dnf {
+            background: rgba(220, 91, 82, 0.16);
+            color: var(--danger);
+        }
+
+        .main-time-wrap {
+            padding: 10px 0 20px;
+            text-align: center;
+        }
+
+        .main-time-label {
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 0.11em;
+            text-transform: uppercase;
+        }
+
+        .main-time {
+            font-variant-numeric: tabular-nums;
+            font-size: clamp(58px, 16vw, 108px);
+            font-weight: 900;
+            line-height: 0.95;
+            letter-spacing: -0.045em;
+        }
+
+        .limit-progress {
+            height: 9px;
+            margin-top: 18px;
+            overflow: hidden;
+            border-radius: 999px;
+            background: #111;
+        }
+
+        .limit-progress-bar {
+            width: 0%;
+            height: 100%;
+            border-radius: inherit;
+            background: var(--accent);
+            transition:
+                width 120ms linear,
+                background 160ms ease;
+        }
+
+        .limit-progress-bar.warning {
+            background: var(--warning);
+        }
+
+        .limit-progress-bar.dnf {
+            background: var(--danger);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .stat {
+            min-width: 0;
+            padding: 15px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: var(--panel-light);
+        }
+
+        .stat-label {
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+
+        .stat-value {
+            overflow: hidden;
+            font-variant-numeric: tabular-nums;
+            font-size: clamp(24px, 7vw, 36px);
+            font-weight: 900;
+            line-height: 1;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .stat-value.penalty {
+            color: var(--warning);
+        }
+
+        .stat-value.final {
+            color: var(--accent);
+        }
+
+        .stat-value.dnf {
+            color: var(--danger);
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            margin-top: 18px;
+        }
+
+        .button {
+            min-height: 62px;
+            padding: 14px 16px;
+            border: 0;
+            border-radius: 16px;
+            cursor: pointer;
+            font-size: 17px;
+            font-weight: 900;
+            letter-spacing: 0.02em;
+            transition:
+                transform 100ms ease,
+                filter 100ms ease,
+                opacity 100ms ease;
+            touch-action: manipulation;
+        }
+
+        .button:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .button-dnf-small:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .button:disabled {
+            cursor: not-allowed;
+            opacity: 0.38;
+        }
+
+        .button-start {
+            background: var(--success);
+            color: #0f1d10;
+        }
+
+        .button-stop {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .button-penalty {
+            color: #fff;
+        }
+
+        .button-penalty-5 {
+            background: #3b82f6;
+        }
+
+        .button-penalty-20 {
+            background: #8b5cf6;
+        }
+
+        .top-right-controls {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 8px;
+        }
+
+        .button-reset-icon,
+        .button-dnf-small {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 42px;
+            min-height: 38px;
+            padding: 0;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 800;
+            touch-action: manipulation;
+        }
+
+        .button-reset-icon {
+            background: var(--panel-light);
+            color: var(--muted);
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .button-dnf-small {
+            background: var(--danger);
+            color: #fff;
+            font-size: 0.72rem;
+            letter-spacing: 0.04em;
+        }
+
+        .button-reset-icon:active,
+        .button-dnf-small:active {
+            transform: scale(0.96);
+        }
+
+        .dnf-banner {
+            display: none;
+            margin-top: 18px;
+            padding: 14px 16px;
+            border: 1px solid rgba(220, 91, 82, 0.4);
+            border-radius: 16px;
+            background: rgba(220, 91, 82, 0.12);
+            color: #ffb4ae;
+            text-align: center;
+            font-weight: 900;
+        }
+
+        .dnf-banner.visible {
+            display: block;
+        }
+
+        .helper {
+            margin: 16px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.5;
+            text-align: center;
+        }
+
+        @media (min-width: 680px) {
+            .stats-grid {
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+            }
+
+            .controls {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .button-start {
+                grid-column: auto;
+            }
+        }
+
+        @media (max-width: 420px) {
+            body {
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .timer-card {
+                padding: 16px;
+                border-radius: 20px;
+            }
+
+            .status-row {
+                padding-right: 58px;
+            }
+
+            .button {
+                min-height: 58px;
+                padding-left: 10px;
+                padding-right: 10px;
+                font-size: 15px;
+            }
+
+            .stat {
+                padding: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <main class="app">
+        <header class="header">
+            <p class="eyebrow">
+                MUDFEST
+            </p>
+
+            <h1>
+                Driver Timer
+            </h1>
+
+            <p class="limit-note">
+                <span id="timeLimitDisplay"></span> maximum raw track time.
+                Exceeding the limit results in DNF.
+            </p>
+        </header>
+
+        <section class="timer-card">
+            <div class="top-right-controls">
+                <button
+                    id="resetButton"
+                    class="button-reset-icon"
+                    type="button"
+                    title="Reset Timer"
+                    aria-label="Reset Timer"
+                >
+                    ↻
+                </button>
+
+                <button
+                    id="dnfButton"
+                    class="button-dnf-small"
+                    type="button"
+                >
+                    DNF
+                </button>
+            </div>
+
+            <div class="status-row">
+                <div class="status-info">
+                    <span class="status-label">
+                        Timer Status
+                    </span>
+
+                    <span
+                        id="startedAtLabel"
+                        class="started-at-label"
+                    >
+                        Started: —
+                    </span>
+                </div>
+
+                <span
+                    id="statusBadge"
+                    class="status-badge"
+                >
+                    READY
+                </span>
+            </div>
+
+            <div class="main-time-wrap">
+                <div class="main-time-label">
+                    Raw Time
+                </div>
+
+                <div
+                    id="rawTimeDisplay"
+                    class="main-time"
+                    aria-live="polite"
+                >
+                    0:00
+                </div>
+
+                <div
+                    class="limit-progress"
+                    aria-hidden="true"
+                >
+                    <div
+                        id="limitProgressBar"
+                        class="limit-progress-bar"
+                    ></div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat">
+                    <div class="stat-label">
+                        Raw Time
+                    </div>
+
+                    <div
+                        id="rawTimeStat"
+                        class="stat-value"
+                    >
+                        0:00
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">
+                        Total Penalties
+                    </div>
+
+                    <div
+                        id="penaltyTimeDisplay"
+                        class="stat-value penalty"
+                    >
+                        0:00
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">
+                        Penalty Count
+                    </div>
+
+                    <div
+                        id="penaltyCountDisplay"
+                        class="stat-value"
+                    >
+                        0
+                    </div>
+                </div>
+
+                <div class="stat">
+                    <div class="stat-label">
+                        Final Time
+                    </div>
+
+                    <div
+                        id="finalTimeDisplay"
+                        class="stat-value final"
+                    >
+                        0:00
+                    </div>
+                </div>
+            </div>
+
+            <div
+                id="dnfBanner"
+                class="dnf-banner"
+            >
+                DNF — Raw time exceeded <span id="dnfTimeLimitDisplay"></span>
+            </div>
+
+            <div class="controls">
+                <button
+                    id="startButton"
+                    class="button button-start"
+                    type="button"
+                >
+                    START
+                </button>
+
+                <button
+                    id="stopButton"
+                    class="button button-stop"
+                    type="button"
+                    disabled
+                >
+                    STOP
+                </button>
+
+                <button
+                    id="add5Button"
+                    class="button button-penalty button-penalty-5"
+                    type="button"
+                    disabled
+                >
+                    +5 SECONDS
+                </button>
+
+                <button
+                    id="add20Button"
+                    class="button button-penalty button-penalty-20"
+                    type="button"
+                    disabled
+                >
+                    +20 SECONDS
+                </button>
+
+            </div>
+
+            <p class="helper">
+                Penalty buttons add time to the final result but do not change the raw track time.
+                STOP freezes the raw timer. Press RESUME to continue.
+            </p>
+        </section>
+    </main>
+
+    <script>
+        // ------------------------------------------------------------
+        // Configuration
+        // ------------------------------------------------------------
+
+        const TIME_LIMIT_SECONDS = 13 * 60;
+        // All displayed limit text and DNF logic use this value.
+
+
+        // ------------------------------------------------------------
+        // State
+        // ------------------------------------------------------------
+
+        let timerState = "ready";
+        let startTimestamp = 0;
+        let accumulatedRawMilliseconds = 0;
+        let penaltySeconds = 0;
+        let penaltyCount = 0;
+        let animationFrameId = null;
+        let timerStartedAt = null;
+
+        let manualDnf =
+            false;
+
+
+        // ------------------------------------------------------------
+        // Elements
+        // ------------------------------------------------------------
+
+        const timeLimitDisplay =
+            document.getElementById("timeLimitDisplay");
+
+        const dnfTimeLimitDisplay =
+            document.getElementById("dnfTimeLimitDisplay");
+
+        const startedAtLabel =
+            document.getElementById("startedAtLabel");
+
+        const statusBadge =
+            document.getElementById("statusBadge");
+
+        const rawTimeDisplay =
+            document.getElementById("rawTimeDisplay");
+
+        const rawTimeStat =
+            document.getElementById("rawTimeStat");
+
+        const penaltyTimeDisplay =
+            document.getElementById("penaltyTimeDisplay");
+
+        const penaltyCountDisplay =
+            document.getElementById("penaltyCountDisplay");
+
+        const finalTimeDisplay =
+            document.getElementById("finalTimeDisplay");
+
+        const limitProgressBar =
+            document.getElementById("limitProgressBar");
+
+        const dnfBanner =
+            document.getElementById("dnfBanner");
+
+        const startButton =
+            document.getElementById("startButton");
+
+        const stopButton =
+            document.getElementById("stopButton");
+
+        const add5Button =
+            document.getElementById("add5Button");
+
+        const add20Button =
+            document.getElementById("add20Button");
+
+        const resetButton =
+            document.getElementById("resetButton");
+
+        const dnfButton =
+            document.getElementById("dnfButton");
+
+
+        // ------------------------------------------------------------
+        // Time helpers
+        // ------------------------------------------------------------
+
+        function getRawMilliseconds() {
+            if (timerState === "running") {
+                return (
+                    accumulatedRawMilliseconds +
+                    (performance.now() - startTimestamp)
+                );
+            }
+
+            return accumulatedRawMilliseconds;
+        }
+
+
+        function getRawSeconds() {
+            return getRawMilliseconds() / 1000;
+        }
+
+
+        function formatTime(totalSeconds) {
+            const safeSeconds =
+                Math.max(
+                    0,
+                    Math.floor(totalSeconds)
+                );
+
+            const minutes =
+                Math.floor(
+                    safeSeconds / 60
+                );
+
+            const seconds =
+                safeSeconds % 60;
+
+            return (
+                minutes +
+                ":" +
+                String(seconds).padStart(2, "0")
+            );
+        }
+
+
+        function formatStartTimestamp(date) {
+            if (!date) {
+                return "—";
+            }
+
+            return date.toLocaleString(
+                undefined,
+                {
+                    year: "numeric",
+                    month: "short",
+                    day: "2-digit",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    second: "2-digit"
+                }
+            );
+        }
+
+
+        function renderConfiguredTimeLimit() {
+            const formattedTimeLimit =
+                formatTime(
+                    TIME_LIMIT_SECONDS
+                );
+
+            timeLimitDisplay.textContent =
+                formattedTimeLimit;
+
+            dnfTimeLimitDisplay.textContent =
+                formattedTimeLimit;
+        }
+
+
+        function hasExceededTimeLimit() {
+            return (
+                manualDnf ||
+                getRawSeconds() >
+                    TIME_LIMIT_SECONDS
+            );
+        }
+
+
+        // ------------------------------------------------------------
+        // Rendering
+        // ------------------------------------------------------------
+
+        function renderStatus() {
+            const isDNF =
+                hasExceededTimeLimit();
+
+            statusBadge.className =
+                "status-badge";
+
+            if (isDNF) {
+                statusBadge.textContent =
+                    "DNF";
+
+                statusBadge.classList.add(
+                    "dnf"
+                );
+
+                return;
+            }
+
+            if (timerState === "running") {
+                statusBadge.textContent =
+                    "RUNNING";
+
+                statusBadge.classList.add(
+                    "running"
+                );
+
+                return;
+            }
+
+            if (timerState === "paused") {
+                statusBadge.textContent =
+                    "PAUSED";
+
+                statusBadge.classList.add(
+                    "paused"
+                );
+
+                return;
+            }
+
+            if (timerState === "stopped") {
+                statusBadge.textContent =
+                    "STOPPED";
+
+                statusBadge.classList.add(
+                    "stopped"
+                );
+
+                return;
+            }
+
+            statusBadge.textContent =
+                "READY";
+        }
+
+
+        function renderProgress() {
+            const rawSeconds =
+                getRawSeconds();
+
+            const progressPercent =
+                Math.min(
+                    100,
+                    (rawSeconds / TIME_LIMIT_SECONDS) * 100
+                );
+
+            limitProgressBar.style.width =
+                progressPercent + "%";
+
+            limitProgressBar.className =
+                "limit-progress-bar";
+
+            if (rawSeconds > TIME_LIMIT_SECONDS) {
+                limitProgressBar.classList.add(
+                    "dnf"
+                );
+            }
+            else if (
+                rawSeconds >=
+                TIME_LIMIT_SECONDS * 0.8
+            ) {
+                limitProgressBar.classList.add(
+                    "warning"
+                );
+            }
+        }
+
+
+        function renderButtons() {
+            const canAddPenalty =
+                timerState === "running" ||
+                timerState === "paused";
+
+            startButton.disabled =
+                timerState !== "ready";
+
+            stopButton.disabled =
+                !(
+                    timerState === "running" ||
+                    timerState === "paused"
+                );
+
+            dnfButton.disabled =
+                timerState === "ready" ||
+                hasExceededTimeLimit();
+
+            stopButton.textContent =
+                timerState === "paused"
+                    ? "RESUME"
+                    : "STOP";
+
+            add5Button.disabled =
+                !canAddPenalty;
+
+            add20Button.disabled =
+                !canAddPenalty;
+        }
+
+
+        function render() {
+            if (startedAtLabel) {
+                startedAtLabel.textContent =
+                    "Started: " +
+                    formatStartTimestamp(
+                        timerStartedAt
+                    );
+            }
+            const rawSeconds =
+                getRawSeconds();
+
+            const finalSeconds =
+                rawSeconds +
+                penaltySeconds;
+
+            const formattedRawTime =
+                formatTime(
+                    rawSeconds
+                );
+
+            rawTimeDisplay.textContent =
+                formattedRawTime;
+
+            rawTimeStat.textContent =
+                formattedRawTime;
+
+            penaltyTimeDisplay.textContent =
+                formatTime(
+                    penaltySeconds
+                );
+
+            penaltyCountDisplay.textContent =
+                String(
+                    penaltyCount
+                );
+
+            if (hasExceededTimeLimit()) {
+                finalTimeDisplay.textContent =
+                    "DNF";
+
+                finalTimeDisplay.classList.add(
+                    "dnf"
+                );
+
+                dnfBanner.classList.add(
+                    "visible"
+                );
+            }
+            else {
+                finalTimeDisplay.textContent =
+                    formatTime(
+                        finalSeconds
+                    );
+
+                finalTimeDisplay.classList.remove(
+                    "dnf"
+                );
+
+                dnfBanner.classList.remove(
+                    "visible"
+                );
+            }
+
+            renderStatus();
+            renderProgress();
+            renderButtons();
+        }
+
+
+        function animationLoop() {
+            if (
+                timerState === "running" &&
+                hasExceededTimeLimit()
+            ) {
+                accumulatedRawMilliseconds =
+                    getRawMilliseconds();
+
+                timerState =
+                    "stopped";
+
+                if (animationFrameId !== null) {
+                    cancelAnimationFrame(
+                        animationFrameId
+                    );
+
+                    animationFrameId =
+                        null;
+                }
+
+                render();
+
+                return;
+            }
+
+            render();
+
+            if (timerState === "running") {
+                animationFrameId =
+                    requestAnimationFrame(
+                        animationLoop
+                    );
+            }
+            else {
+                animationFrameId =
+                    null;
+            }
+        }
+
+
+        // ------------------------------------------------------------
+        // Timer actions
+        // ------------------------------------------------------------
+
+        function startTimer() {
+            if (timerState !== "ready") {
+                return;
+            }
+
+            timerStartedAt =
+                new Date();
+
+            timerState =
+                "running";
+
+            startTimestamp =
+                performance.now();
+
+            animationLoop();
+        }
+
+
+
+        function stopTimer() {
+            if (timerState === "running") {
+                accumulatedRawMilliseconds =
+                    getRawMilliseconds();
+
+                timerState =
+                    "paused";
+
+                if (animationFrameId !== null) {
+                    cancelAnimationFrame(
+                        animationFrameId
+                    );
+
+                    animationFrameId =
+                        null;
+                }
+
+                render();
+
+                return;
+            }
+
+            if (timerState === "paused") {
+                timerState =
+                    "running";
+
+                startTimestamp =
+                    performance.now();
+
+                animationLoop();
+            }
+        }
+
+
+        function addPenalty(seconds) {
+            if (
+                timerState !== "running" &&
+                timerState !== "paused"
+            ) {
+                return;
+            }
+
+            penaltySeconds +=
+                seconds;
+
+            penaltyCount +=
+                1;
+
+            render();
+        }
+
+
+        function markDnf() {
+            const confirmed =
+                confirm(
+                    "Mark this driver as DNF?"
+                );
+
+            if (!confirmed) {
+                return;
+            }
+
+            if (timerState === "running") {
+                accumulatedRawMilliseconds =
+                    getRawMilliseconds();
+            }
+
+            manualDnf =
+                true;
+
+            timerState =
+                "stopped";
+
+            if (animationFrameId !== null) {
+                cancelAnimationFrame(
+                    animationFrameId
+                );
+
+                animationFrameId =
+                    null;
+            }
+
+            render();
+        }
+
+
+        function resetTimer() {
+            if (
+                timerState !== "ready"
+            ) {
+                const confirmed =
+                    confirm(
+                        "Reset the timer and clear all penalties?"
+                    );
+
+                if (!confirmed) {
+                    return;
+                }
+            }
+
+            if (animationFrameId !== null) {
+                cancelAnimationFrame(
+                    animationFrameId
+                );
+
+                animationFrameId =
+                    null;
+            }
+
+            timerState =
+                "ready";
+
+            timerStartedAt =
+                null;
+
+            manualDnf =
+                false;
+
+            startTimestamp =
+                0;
+
+            accumulatedRawMilliseconds =
+                0;
+
+            penaltySeconds =
+                0;
+
+            penaltyCount =
+                0;
+
+            render();
+        }
+
+
+        // ------------------------------------------------------------
+        // Events
+        // ------------------------------------------------------------
+
+        startButton.addEventListener(
+            "click",
+            startTimer
+        );
+
+        stopButton.addEventListener(
+            "click",
+            stopTimer
+        );
+
+        add5Button.addEventListener(
+            "click",
+            function () {
+                addPenalty(5);
+            }
+        );
+
+        add20Button.addEventListener(
+            "click",
+            function () {
+                addPenalty(20);
+            }
+        );
+
+        resetButton.addEventListener(
+            "click",
+            resetTimer
+        );
+
+        dnfButton.addEventListener(
+            "click",
+            markDnf
+        );
+
+
+        // Initial screen.
+        renderConfiguredTimeLimit();
+        render();
+    </script>
+
+    <script>
+        if ("serviceWorker" in navigator) {
+            window.addEventListener("load", function () {
+                navigator.serviceWorker
+                    .register("./service-worker.js")
+                    .catch(function (error) {
+                        console.error(
+                            "Service worker registration failed:",
+                            error
+                        );
+                    });
+            });
+        }
+    </script>
+
+</body>
+</html>
